@@ -1,6 +1,6 @@
-from typing import Any, ClassVar, Optional
+from typing import ClassVar, Optional
 from pydantic import BaseModel, Field, constr
-from openctp_ctp import mdapi, tdapi
+from openctp_ctp import tdapi
 
 
 class CtpField(BaseModel):
@@ -15,6 +15,7 @@ class CtpField(BaseModel):
 
     class Config:
         orm_mode = True
+
 
 class ReqUserLoginField(CtpField):
     _ctp_type_ = tdapi.CThostFtdcReqUserLoginField

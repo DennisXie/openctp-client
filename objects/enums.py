@@ -14,3 +14,7 @@ class CtpMethod(Enum):
     OnOrderInsert = auto(IntFlag)
     OnErrRtnOrderInsert = auto(IntFlag)
     OnRtnTrade = auto(IntFlag)
+    
+    @classmethod
+    def nameOf(cls, name):
+        return cls.__members__.get(name, None)
