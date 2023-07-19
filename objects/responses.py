@@ -23,3 +23,23 @@ class RspUserLogin(CtpResponse):
     @property
     def args(self) -> list[any]:
         return [self.RspUserLogin, self.RspInfo, self.RequestID, self.IsLast]
+
+
+class RspSubMarketData(CtpResponse):
+    method: CtpMethod = CtpMethod.OnRspSubMarketData
+    
+    SpecificInstrument: Optional[SpecificInstrumentField]
+    
+    @property
+    def args(self) -> list[any]:
+        return [self.SpecificInstrument, self.RspInfo, self.RequestID, self.IsLast]
+
+
+class RtnDepthMarketData(CtpResponse):
+    method: CtpMethod = CtpMethod.OnRtnDepthMarketData
+    
+    DepthMarketData: Optional[DepthMarketDataField]
+    
+    @property
+    def args(self) -> list[any]:
+        return [self.DepthMarketData]

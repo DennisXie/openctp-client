@@ -37,18 +37,18 @@ class MdClient(mdapi.CThostFtdcMdSpi):
             self._call_map[response.method](*response.args)
         else:
             # TODO: add warning
-            pass
+            print(f"no callback for {response.method.name()} found")
     
-    def set_spi(self, method: CtpMethod, callback: Callable) -> None:
+    def add_spi_callback(self, method: CtpMethod, callback: Callable) -> None:
         if method in self._call_map:
             self._call_map[method].append(callback)
         else:
             self._call_map[method] = list(callback)
     
-    def get_spi(self, method: CtpMethod) -> Optional[list[Callable]]:
+    def get_spi_callback(self, method: CtpMethod) -> Optional[list[Callable]]:
         return self._call_map.get(method, None)
     
-    def del_spi(self, method: CtpMethod, callback: Callable):
+    def del_spi_callback(self, method: CtpMethod, callback: Callable):
         if method in self._call_map:
             self._call_map[method].remove(callback)
             
@@ -73,17 +73,17 @@ class MdClient(mdapi.CThostFtdcMdSpi):
         req.Password = self.config.password
         self.api.ReqUserLogin(req, self.request_id)
 
-    def OnRspUserLogin(self, pRspUserLogin: mdapi.CThostFtdcRspUserLoginField, pRspInfo, nRequestID, bIsLast):
+    def OnRspUserLogin(self, pRspUserLogin: mdapi.CThostFtdcRspUserLoginField, pRspInfo: mdapi.CThostFtdcRspInfoField, nRequestID: int, bIsLast: bool):
         """called when login responding"""
-        # TODO: callback
+        rsp = RspUserLogin(RequestID=nRequestID, IsLast=bIsLast)
+        if pRspUserLogin:
+            rsp.RspUserLogin = RspUserLoginField.from_orm(pRspUserLogin)
+            
         if pRspInfo is not None:
+            rsp.RspInfo = RspInfoField.from_orm(pRspInfo)
             print(f"login rsp info, ErrorID: {pRspInfo.ErrorID}, ErrorMsg: {pRspInfo.ErrorMsg}")
-
-        if pRspInfo is None or pRspInfo.ErrorID == 0:
-            print("login success, start to confirm settlement info")
-        else:
-            print("login failed, please try again")
-            exit(1)
+            
+        self.callback(rsp)
    
     def SubscribeMarketData(self, instrument_ids: list[str]) -> Tuple[int, int]:
         instrument_ids = list(map(lambda i: i.encode(), instrument_ids))
@@ -92,13 +92,18 @@ class MdClient(mdapi.CThostFtdcMdSpi):
         return (request_id, ret)
     
     def OnRspSubMarketData(self, pSpecificInstrument: mdapi.CThostFtdcSpecificInstrumentField, pRspInfo: mdapi.CThostFtdcRspInfoField, nRequestID, bIsLast):
-        data = SpecificInstrumentField.from_orm(pSpecificInstrument)
-        rsp = None
+        rsp = RspSubMarketData(RequestID=nRequestID, IsLast=bIsLast)
+        if pSpecificInstrument:
+            rsp.SpecificInstrument = SpecificInstrumentField.from_orm(pSpecificInstrument)
+            
+        if pRspInfo:
+            rsp.RspInfo = RspInfoField.from_orm(pRspInfo)
+        
         self.callback(rsp)
 
     def OnRtnDepthMarketData(self, pDepthMarketData: mdapi.CThostFtdcDepthMarketDataField):
-        data = DepthMarketDataField.from_orm(pDepthMarketData)
-        rsp = None
+        rsp = RtnDepthMarketData()
+        rsp.DepthMarketData = DepthMarketDataField.from_orm(pDepthMarketData)
         self.callback(rsp)
 
             
