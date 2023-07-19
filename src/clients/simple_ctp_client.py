@@ -34,7 +34,8 @@ class MdClient(mdapi.CThostFtdcMdSpi):
     
     def _default_callback(self, response: CtpResponse) -> None:
         if response.method in self._call_map:
-            self._call_map[response.method](*response.args)
+            for callback in self._call_map[response.method]:
+                callback(*response.args)
         else:
             # TODO: add warning
             print(f"no callback for {response.method.name()} found")
@@ -43,7 +44,7 @@ class MdClient(mdapi.CThostFtdcMdSpi):
         if method in self._call_map:
             self._call_map[method].append(callback)
         else:
-            self._call_map[method] = list(callback)
+            self._call_map[method] = [callback]
     
     def get_spi_callback(self, method: CtpMethod) -> Optional[list[Callable]]:
         return self._call_map.get(method, None)
