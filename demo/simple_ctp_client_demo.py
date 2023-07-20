@@ -1,6 +1,6 @@
-from src.objects import *
-from src.objects.enums import CtpMethod
-from src.clients.simple_ctp_client import MdClient
+from openctp_client.objects import *
+from openctp_client.objects.enums import CtpMethod
+from openctp_client.clients.simple_ctp_client import MdClient
 
 if __name__ == "__main__":
     config = CtpConfig("tcp://180.168.146.187:10211", "9999", "9999", "9999", "9999", "9999")
