@@ -1,20 +1,22 @@
-from typing import ClassVar, Optional
-from pydantic import BaseModel, Field, constr
+from typing import ClassVar, Optional, TypeVar
+from pydantic import BaseModel, Field, constr, ConfigDict
 from openctp_ctp import tdapi
 
 
 class CtpField(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     _ctp_type_: ClassVar[callable] = None
 
     def ctp_object(self) -> any:
         obj = self._ctp_type_()
-        for key, value in self.dict().items():
+        for key, value in self.model_dump().items():
             if value is not None:
                 setattr(obj, key, value)
         return obj
-
-    class Config:
-        orm_mode = True
+    
+    @classmethod
+    def from_ctp_object(cls: 'CtpField', obj: any) -> 'CtpField':
+        return cls.model_validate(obj) if obj else None
 
 
 class ReqUserLoginField(CtpField):

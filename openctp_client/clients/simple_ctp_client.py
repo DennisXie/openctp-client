@@ -46,8 +46,8 @@ class MdClient(mdapi.CThostFtdcMdSpi):
         else:
             self._call_map[method] = [callback]
     
-    def get_spi_callback(self, method: CtpMethod) -> Optional[list[Callable]]:
-        return self._call_map.get(method, None)
+    def get_spi_callback(self, method: CtpMethod) -> list[Callable]:
+        return self._call_map.get(method, list())
     
     def del_spi_callback(self, method: CtpMethod, callback: Callable):
         if method in self._call_map:
@@ -77,11 +77,10 @@ class MdClient(mdapi.CThostFtdcMdSpi):
     def OnRspUserLogin(self, pRspUserLogin: mdapi.CThostFtdcRspUserLoginField, pRspInfo: mdapi.CThostFtdcRspInfoField, nRequestID: int, bIsLast: bool):
         """called when login responding"""
         rsp = RspUserLogin(RequestID=nRequestID, IsLast=bIsLast)
-        if pRspUserLogin:
-            rsp.RspUserLogin = RspUserLoginField.from_orm(pRspUserLogin)
+        rsp.RspUserLogin = RspUserLoginField.from_ctp_object(pRspUserLogin)
+        rsp.RspInfo = RspInfoField.from_ctp_object(pRspInfo)
             
         if pRspInfo is not None:
-            rsp.RspInfo = RspInfoField.from_orm(pRspInfo)
             print(f"login rsp info, ErrorID: {pRspInfo.ErrorID}, ErrorMsg: {pRspInfo.ErrorMsg}")
             
         self.callback(rsp)
@@ -94,17 +93,13 @@ class MdClient(mdapi.CThostFtdcMdSpi):
     
     def OnRspSubMarketData(self, pSpecificInstrument: mdapi.CThostFtdcSpecificInstrumentField, pRspInfo: mdapi.CThostFtdcRspInfoField, nRequestID, bIsLast):
         rsp = RspSubMarketData(RequestID=nRequestID, IsLast=bIsLast)
-        if pSpecificInstrument:
-            rsp.SpecificInstrument = SpecificInstrumentField.from_orm(pSpecificInstrument)
-            
-        if pRspInfo:
-            rsp.RspInfo = RspInfoField.from_orm(pRspInfo)
-        
+        rsp.SpecificInstrument = SpecificInstrumentField.from_ctp_object(pSpecificInstrument)
+        rsp.RspInfo = RspInfoField.from_ctp_object(pRspInfo)
         self.callback(rsp)
 
     def OnRtnDepthMarketData(self, pDepthMarketData: mdapi.CThostFtdcDepthMarketDataField):
         rsp = RtnDepthMarketData()
-        rsp.DepthMarketData = DepthMarketDataField.from_orm(pDepthMarketData)
+        rsp.DepthMarketData = DepthMarketDataField.from_ctp_object(pDepthMarketData)
         self.callback(rsp)
 
             
