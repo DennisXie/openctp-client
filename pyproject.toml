@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "openctp-client"
-version = "6.6.7.0"
+version = "6.6.7.1"
 authors = [
     {name="Dennis Xie", email="dennisxie1992@outlook.com"}
 ]
