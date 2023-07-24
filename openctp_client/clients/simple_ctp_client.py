@@ -15,9 +15,13 @@ class MdClient(mdapi.CThostFtdcMdSpi):
         self.request_count: int = 0
         self._callback: Callable[[CtpResponse], None] = self._default_callback
         self._call_map: dict[CtpMethod, list[Callable]] = {}
-        self.api: mdapi.CThostFtdcMdApi = mdapi.CThostFtdcMdApi.CreateFtdcMdApi(self.config.user_id)
-        self.api.RegisterSpi(self)
-        self.api.RegisterFront(self.config.addr)
+        self._api: mdapi.CThostFtdcMdApi = mdapi.CThostFtdcMdApi.CreateFtdcMdApi(self.config.user_id)
+        self._api.RegisterSpi(self)
+        self._api.RegisterFront(self.config.addr)
+    
+    @property
+    def api(self) -> mdapi.CThostFtdcMdApi:
+        return self._api
     
     @property
     def request_id(self) -> int:
@@ -52,6 +56,7 @@ class MdClient(mdapi.CThostFtdcMdSpi):
     def del_spi_callback(self, method: CtpMethod, callback: Callable):
         if method in self._call_map:
             self._call_map[method].remove(callback)
+        # TODO: add warning
             
     def Connect(self) -> None:
         self.api.Init()
@@ -76,9 +81,12 @@ class MdClient(mdapi.CThostFtdcMdSpi):
 
     def OnRspUserLogin(self, pRspUserLogin: mdapi.CThostFtdcRspUserLoginField, pRspInfo: mdapi.CThostFtdcRspInfoField, nRequestID: int, bIsLast: bool):
         """called when login responding"""
-        rsp = RspUserLogin(RequestID=nRequestID, IsLast=bIsLast)
-        rsp.RspUserLogin = RspUserLoginField.from_ctp_object(pRspUserLogin)
-        rsp.RspInfo = RspInfoField.from_ctp_object(pRspInfo)
+        rsp = RspUserLogin(
+            RspUserLogin=RspUserLoginField.from_ctp_object(pRspUserLogin),
+            RspInfo=RspInfoField.from_ctp_object(pRspInfo),
+            RequestID=nRequestID,
+            IsLast=bIsLast
+        )
             
         if pRspInfo is not None:
             print(f"login rsp info, ErrorID: {pRspInfo.ErrorID}, ErrorMsg: {pRspInfo.ErrorMsg}")
@@ -92,14 +100,16 @@ class MdClient(mdapi.CThostFtdcMdSpi):
         return (request_id, ret)
     
     def OnRspSubMarketData(self, pSpecificInstrument: mdapi.CThostFtdcSpecificInstrumentField, pRspInfo: mdapi.CThostFtdcRspInfoField, nRequestID, bIsLast):
-        rsp = RspSubMarketData(RequestID=nRequestID, IsLast=bIsLast)
-        rsp.SpecificInstrument = SpecificInstrumentField.from_ctp_object(pSpecificInstrument)
-        rsp.RspInfo = RspInfoField.from_ctp_object(pRspInfo)
+        rsp = RspSubMarketData(
+            SpecificInstrument=SpecificInstrumentField.from_ctp_object(pSpecificInstrument),
+            RspInfo=RspInfoField.from_ctp_object(pRspInfo),
+            RequestID=nRequestID,
+            IsLast=bIsLast
+        )
         self.callback(rsp)
 
     def OnRtnDepthMarketData(self, pDepthMarketData: mdapi.CThostFtdcDepthMarketDataField):
-        rsp = RtnDepthMarketData()
-        rsp.DepthMarketData = DepthMarketDataField.from_ctp_object(pDepthMarketData)
+        rsp = RtnDepthMarketData(DepthMarketData=DepthMarketDataField.from_ctp_object(pDepthMarketData))
         self.callback(rsp)
 
             

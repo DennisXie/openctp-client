@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from .enums import CtpMethod
 from .fields import *
 
@@ -6,7 +6,7 @@ from .fields import *
 class CtpResponse(BaseModel):
     method: CtpMethod
     
-    RspInfo: RspInfoField = RspInfoField()
+    RspInfo: RspInfoField = Field(default_factory=RspInfoField)
     RequestID: Optional[int] = None
     IsLast: bool = True
     
@@ -18,7 +18,7 @@ class CtpResponse(BaseModel):
 class RspUserLogin(CtpResponse):
     method: CtpMethod = CtpMethod.OnRspUserLogin
 
-    RspUserLogin: Optional[RspUserLoginField]
+    RspUserLogin: Optional[RspUserLoginField] = None
     
     @property
     def args(self) -> list[any]:
@@ -28,7 +28,7 @@ class RspUserLogin(CtpResponse):
 class RspSubMarketData(CtpResponse):
     method: CtpMethod = CtpMethod.OnRspSubMarketData
     
-    SpecificInstrument: Optional[SpecificInstrumentField]
+    SpecificInstrument: Optional[SpecificInstrumentField] = None
     
     @property
     def args(self) -> list[any]:

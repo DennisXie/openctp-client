@@ -110,8 +110,8 @@ class AuthenticationInfoField(CtpField):
 class RspInfoField(CtpField):
     _ctp_type_ = tdapi.CThostFtdcRspInfoField
     
-    ErrorID: Optional[int] = Field(None, description='错误代码')
-    ErrorMsg: Optional[constr(max_length=81)] = Field(None, description='错误信息')
+    ErrorID: Optional[int] = Field(default=0, description='错误代码')
+    ErrorMsg: Optional[constr(max_length=81)] = Field(default="", description='错误信息')
     
 class ExchangeField(CtpField):
     _ctp_type_ = tdapi.CThostFtdcExchangeField
