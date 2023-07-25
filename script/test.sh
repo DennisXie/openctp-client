@@ -1,1 +1,1 @@
-PYTHONPATH=. pytest --cov=openctp_client --cov-report xml:cov.xml tests/
+PYTHONPATH=. pytest --cov=openctp_client --cov-report xml:coverage/cov.xml tests/
