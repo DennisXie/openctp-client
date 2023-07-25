@@ -1,3 +1,5 @@
+openctp-ctp==6.6.7
 pydantic>=2.0.3
 pytest>=7.4.0
 pytest-mock>=3.1.0
+pytest-cov>=4.1.0
