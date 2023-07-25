@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - master
+    paths:
+      - "openctp_client/**"
+      - "tests/**"
   pull_request:
     types:
       - opened
