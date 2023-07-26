@@ -16,7 +16,7 @@ def config():
     return conf
 
 @pytest.fixture
-def client(config: CtpConfig, mocker: MockerFixture):
+def md_client(config: CtpConfig, mocker: MockerFixture):
     mdapi = mocker.patch("openctp_client.clients.md_client.mdapi")
     api = mocker.Mock(name="api")
     mdapi.CThostFtdcMdApi.CreateFtdcMdApi.return_value = api
@@ -38,44 +38,44 @@ def test_should_get_none_when_del_spi_callback_from_md_client(config: CtpConfig,
     assert callback is None
 
 # The fixture seems called by the order of they are required by the test function
-def test_should_call_Init_when_Connect(client):
-    client.Connect()
-    assert client.api.Init.called_once
+def test_should_call_Init_when_Connect(md_client):
+    md_client.Connect()
+    assert md_client.api.Init.called_once
 
-def test_should_call_api_ReqUserLogin_when_OnFrontConnected(client):
-    client.OnFrontConnected()
-    assert client.api.ReqUserLogin.called_once
+def test_should_call_api_ReqUserLogin_when_OnFrontConnected(md_client):
+    md_client.OnFrontConnected()
+    assert md_client.api.ReqUserLogin.called_once
 
-def test_should_call_callback_when_OnRspUserLogin(client, spi_callback):
+def test_should_call_callback_when_OnRspUserLogin(md_client, spi_callback):
     # given
-    client.set_spi_callback(CtpMethod.OnRspUserLogin, spi_callback)
+    md_client.set_spi_callback(CtpMethod.OnRspUserLogin, spi_callback)
     pRspUserLogin = mdapi.CThostFtdcRspUserLoginField()
     pRspInfo = mdapi.CThostFtdcRspInfoField()
     # when
-    client.OnRspUserLogin(pRspUserLogin, pRspInfo, 1, True)
+    md_client.OnRspUserLogin(pRspUserLogin, pRspInfo, 1, True)
     # should
     spi_callback.assert_called_once
 
-def test_should_call_api_SubscribeMarketData_when_SubscribeMarketData(client):
-    client.SubscribeMarketData(["rb2001", "ag2308"])
-    assert client.api.SubscribeMarketData.called_once_with([b"rb2001", b"ag2308"])
+def test_should_call_api_SubscribeMarketData_when_SubscribeMarketData(md_client):
+    md_client.SubscribeMarketData(["rb2001", "ag2308"])
+    assert md_client.api.SubscribeMarketData.called_once_with([b"rb2001", b"ag2308"])
 
-def test_should_call_callback_when_OnRspSubMarketData(client, spi_callback):
+def test_should_call_callback_when_OnRspSubMarketData(md_client, spi_callback):
     # given
-    client.set_spi_callback(CtpMethod.OnRspSubMarketData, spi_callback)
+    md_client.set_spi_callback(CtpMethod.OnRspSubMarketData, spi_callback)
     pSpecificInstrument = mdapi.CThostFtdcSpecificInstrumentField()
     pRspInfo = mdapi.CThostFtdcRspInfoField()
     # when
-    client.OnRspSubMarketData(pSpecificInstrument, pRspInfo, 1, True)
+    md_client.OnRspSubMarketData(pSpecificInstrument, pRspInfo, 1, True)
     # should
     spi_callback.assert_called_once
 
-def test_should_call_callback_when_OnRtnDepthMarketData(client, spi_callback):
+def test_should_call_callback_when_OnRtnDepthMarketData(md_client, spi_callback):
     # given
-    client.set_spi_callback(CtpMethod.OnRtnDepthMarketData, spi_callback)
+    md_client.set_spi_callback(CtpMethod.OnRtnDepthMarketData, spi_callback)
     pDepthMarketData = mdapi.CThostFtdcDepthMarketDataField()
     # when
-    client.OnRtnDepthMarketData(pDepthMarketData)
+    md_client.OnRtnDepthMarketData(pDepthMarketData)
     # should
     spi_callback.assert_called_once
     

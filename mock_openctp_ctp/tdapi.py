@@ -9,11 +9,11 @@ from typing import Any, Optional
 from pydantic import BaseModel, Field, constr
 
 
-class CThostFtdcTdSpi(object):
+class CThostFtdcTraderSpi(object):
     pass
 
 
-class CThostFtdcMdApi(object):
+class CThostFtdcTraderApi(object):
     
     @classmethod
     def CreateFtdcMdApi(cls, *args, **kwargs):
