@@ -12,7 +12,7 @@ class MdClient(mdapi.CThostFtdcMdSpi):
     def __init__(self, config: CtpConfig) -> None:
         super().__init__()
         self.config: CtpConfig = config
-        self.request_count: int = 0
+        self._request_count: int = 0
         self._callback: Callable[[CtpResponse], None] = self._default_callback
         self._call_map: dict[CtpMethod, Callable] = {}
         self._api: mdapi.CThostFtdcMdApi = mdapi.CThostFtdcMdApi.CreateFtdcMdApi(self.config.user_id)
@@ -25,8 +25,8 @@ class MdClient(mdapi.CThostFtdcMdSpi):
     
     @property
     def request_id(self) -> int:
-        self.request_count += 1
-        return self.request_count
+        self._request_count += 1
+        return self._request_count
     
     @property
     def callback(self) -> Callable[[CtpResponse], None]:
@@ -46,12 +46,11 @@ class MdClient(mdapi.CThostFtdcMdSpi):
     def set_spi_callback(self, method: CtpMethod, callback: Callable) -> None:
         self._call_map[method] = callback
     
-    def get_spi_callback(self, method: CtpMethod) -> Callable:
+    def get_spi_callback(self, method: CtpMethod) -> Callable | None:
         return self._call_map.get(method)
     
-    def del_spi_callback(self, method: CtpMethod, callback: Callable) -> None:
-        if method in self._call_map:
-            del self._call_map[method]
+    def del_spi_callback(self, method: CtpMethod) -> Callable | None:
+        self._call_map.pop(method, None)
             
     def Connect(self) -> None:
         self.api.Init()
