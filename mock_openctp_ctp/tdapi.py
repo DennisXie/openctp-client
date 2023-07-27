@@ -16,7 +16,7 @@ class CThostFtdcTraderSpi(object):
 class CThostFtdcTraderApi(object):
     
     @classmethod
-    def CreateFtdcMdApi(cls, *args, **kwargs):
+    def CreateFtdcTraderApi(cls, *args, **kwargs):
         return cls()
     
     def RegisterSpi(self, *args, **kwargs):
