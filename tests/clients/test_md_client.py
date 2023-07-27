@@ -31,14 +31,14 @@ def test_should_get_none_when_del_spi_callback_from_md_client(config: CtpConfig,
 
 
 # The fixture seems called by the order of they are required by the test function
-def test_should_call_Init_when_Connect(md_client):
+def test_should_call_Init_when_Connect(md_client: MdClient):
     md_client.Connect()
-    assert md_client.api.Init.called_once
+    md_client.api.Init.assert_called_once()
 
 
 def test_should_call_api_ReqUserLogin_when_OnFrontConnected(md_client):
     md_client.OnFrontConnected()
-    assert md_client.api.ReqUserLogin.called_once
+    md_client.api.ReqUserLogin.assert_called_once()
 
 
 def test_should_call_callback_when_OnRspUserLogin(md_client, spi_callback):
@@ -49,7 +49,7 @@ def test_should_call_callback_when_OnRspUserLogin(md_client, spi_callback):
     # when
     md_client.OnRspUserLogin(pRspUserLogin, pRspInfo, 1, True)
     # should
-    spi_callback.assert_called_once
+    spi_callback.assert_called_once()
 
 
 def test_should_call_api_SubscribeMarketData_when_SubscribeMarketData(md_client):
@@ -65,7 +65,7 @@ def test_should_call_callback_when_OnRspSubMarketData(md_client, spi_callback):
     # when
     md_client.OnRspSubMarketData(pSpecificInstrument, pRspInfo, 1, True)
     # should
-    spi_callback.assert_called_once
+    spi_callback.assert_called_once()
 
 
 def test_should_call_callback_when_OnRtnDepthMarketData(md_client, spi_callback):
@@ -75,5 +75,5 @@ def test_should_call_callback_when_OnRtnDepthMarketData(md_client, spi_callback)
     # when
     md_client.OnRtnDepthMarketData(pDepthMarketData)
     # should
-    spi_callback.assert_called_once
+    spi_callback.assert_called_once()
    

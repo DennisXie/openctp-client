@@ -14,7 +14,7 @@ class MdClient(mdapi.CThostFtdcMdSpi):
         self.config: CtpConfig = config
         self._request_count: int = 0
         self._callback: Callable[[CtpResponse], None] = self._default_callback
-        self._call_map: dict[CtpMethod, Callable] = {}
+        self._spi_callback: dict[CtpMethod, Callable] = {}
         self._api: mdapi.CThostFtdcMdApi = mdapi.CThostFtdcMdApi.CreateFtdcMdApi(self.config.user_id)
         self._api.RegisterSpi(self)
         self._api.RegisterFront(self.config.addr)
@@ -36,21 +36,24 @@ class MdClient(mdapi.CThostFtdcMdSpi):
     def callback(self, callback: Callable[[CtpResponse], None]) -> None:
         self._callback = callback
     
+    def log(self, *args, **kwargs) -> None:
+        print(*args, **kwargs)
+    
     def _default_callback(self, response: CtpResponse) -> None:
-        if response.method in self._call_map:
-            self._call_map[response.method](*response.args)
+        if response.method in self._spi_callback:
+            self._spi_callback[response.method](*response.args)
         else:
             # TODO: add warning
-            print(f"no callback for {response.method.name()} found")
+            self.log(f"no callback for {response.method.name()} found")
     
     def set_spi_callback(self, method: CtpMethod, callback: Callable) -> None:
-        self._call_map[method] = callback
+        self._spi_callback[method] = callback
     
     def get_spi_callback(self, method: CtpMethod) -> Callable | None:
-        return self._call_map.get(method)
+        return self._spi_callback.get(method)
     
     def del_spi_callback(self, method: CtpMethod) -> Callable | None:
-        self._call_map.pop(method, None)
+        self._spi_callback.pop(method, None)
             
     def Connect(self) -> None:
         self.api.Init()
@@ -83,7 +86,7 @@ class MdClient(mdapi.CThostFtdcMdSpi):
         )
             
         if pRspInfo is not None:
-            print(f"login rsp info, ErrorID: {pRspInfo.ErrorID}, ErrorMsg: {pRspInfo.ErrorMsg}")
+            self.log(f"login rsp info, ErrorID: {pRspInfo.ErrorID}, ErrorMsg: {pRspInfo.ErrorMsg}")
             
         self.callback(rsp)
    

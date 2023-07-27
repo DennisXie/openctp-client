@@ -19,6 +19,7 @@ def test_should_create_TdClient(config: CtpConfig):
     assert td_client is not None
     assert td_client.config is config
     assert td_client.request_id == 1
+    assert td_client.api is not None
 
 
 def test_should_have_default_callback(td_client: TdClient):
@@ -51,3 +52,53 @@ def test_should_get_none_when_del_spi_callback_from_md_client(config: CtpConfig,
     callback = td_client.get_spi_callback(CtpMethod.OnOrderInsert)
     assert deleted_callback is spi_callback
     assert callback is None
+
+
+def test_should_call_Init_when_Connect(td_client: TdClient):
+    td_client.Connect()
+    td_client.api.Init.assert_called_once_with()
+
+
+def test_should_call_api_ReqAuthenticate_when_OnFrontConnected(td_client: TdClient):
+    td_client.OnFrontConnected()
+    td_client.api.ReqAuthenticate.assert_called_once()
+
+
+def test_should_call_api_ReqUserLogin_when_OnRspAuthenticate_success(td_client: TdClient):
+    # given
+    authenticate = tdapi.CThostFtdcRspAuthenticateField()
+    rsp_info = tdapi.CThostFtdcRspInfoField()
+    rsp_info.ErrorID = 0
+    rsp_info.ErrorMsg = ""
+    
+    # when
+    td_client.OnRspAuthenticate(authenticate, rsp_info, 1, True)
+    
+    # then
+    td_client.api.ReqUserLogin.assert_called_once()
+
+
+def test_should_xx_when_OnRspAuthenticate_fail(td_client: TdClient):
+    # given
+    authenticate = tdapi.CThostFtdcRspAuthenticateField()
+    rsp_info = tdapi.CThostFtdcRspInfoField()
+    rsp_info.ErrorID = 1
+    rsp_info.ErrorMsg = ""
+    
+    # when
+    td_client.OnRspAuthenticate(authenticate, rsp_info, 1, True)
+    
+    # then
+    td_client.api.ReqUserLogin.assert_not_called()
+    # TODO: assert authentication failed notification is sent
+
+
+def test_should_call_callback_when_OnRspUserLogin(td_client: TdClient, spi_callback):
+    # given
+    td_client.set_spi_callback(CtpMethod.OnRspUserLogin, spi_callback)
+    pRspUserLogin = tdapi.CThostFtdcRspUserLoginField()
+    pRspInfo = tdapi.CThostFtdcRspInfoField()
+    # when
+    td_client.OnRspUserLogin(pRspUserLogin, pRspInfo, 2, True)
+    # should
+    spi_callback.assert_called_once()
