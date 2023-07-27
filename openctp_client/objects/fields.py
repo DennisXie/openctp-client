@@ -155,6 +155,20 @@ class ProductField(CtpField):
     )
 
 
+class QryInstrumentField(CtpField):
+    _ctp_type_ = tdapi.CThostFtdcQryInstrumentField
+    
+    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
+    ExchangeID: Optional[constr(max_length=9)] = Field(None, description='交易所代码')
+    reserve2: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
+    reserve3: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
+    InstrumentID: Optional[constr(max_length=81)] = Field(None, description='合约代码')
+    ExchangeInstID: Optional[constr(max_length=81)] = Field(
+        None, description='合约在交易所的代码'
+    )
+    ProductID: Optional[constr(max_length=81)] = Field(None, description='产品代码')
+
+
 class InstrumentField(CtpField):
     _ctp_type_ = tdapi.CThostFtdcInstrumentField
     

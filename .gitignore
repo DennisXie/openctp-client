@@ -1,6 +1,7 @@
 # Byte-compiled / optimized / DLL files
 /coverage
 /.idea
+/.vscode
 *.con
 __pycache__/
 *.py[cod]

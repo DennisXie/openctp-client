@@ -102,3 +102,9 @@ def test_should_call_callback_when_OnRspUserLogin(td_client: TdClient, spi_callb
     td_client.OnRspUserLogin(pRspUserLogin, pRspInfo, 2, True)
     # should
     spi_callback.assert_called_once()
+
+
+def test_should_call_api_ReqQryInstrument_when_ReqQryInstrument(td_client: TdClient):
+    req = QryInstrumentField()
+    td_client.ReqQryInstrument(req)
+    td_client.api.ReqQryInstrument.assert_called_once()

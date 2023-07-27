@@ -101,3 +101,8 @@ class TdClient(tdapi.CThostFtdcTraderSpi):
             self.log(f"login rsp info, ErrorID: {pRspInfo.ErrorID}, ErrorMsg: {pRspInfo.ErrorMsg}")
             
         self.callback(rsp)
+    
+    def ReqQryInstrument(self, qry_instrument: QryInstrumentField, req_id: int | None = None) -> int:
+        req = qry_instrument.ctp_object()
+        req_id = req_id or self.request_id
+        return self._api.ReqQryInstrument(req, req_id)
