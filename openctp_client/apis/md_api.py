@@ -7,7 +7,7 @@ from ..objects.fields import *
 from ..objects.responses import *
 
 
-class MdClient(mdapi.CThostFtdcMdSpi):
+class MdAPI(mdapi.CThostFtdcMdSpi):
     
     def __init__(self, config: CtpConfig) -> None:
         super().__init__()

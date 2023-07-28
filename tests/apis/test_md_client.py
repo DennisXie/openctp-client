@@ -2,28 +2,28 @@ import pytest
 from openctp_ctp import mdapi
 from pytest_mock import MockerFixture
 
-from openctp_client.clients.md_client import MdClient
+from openctp_client.apis.md_api import MdAPI
 from openctp_client.objects import *
 from openctp_client.objects import CtpConfig
 
 
 @pytest.fixture
 def md_client(config: CtpConfig, mocker: MockerFixture):
-    mdapi = mocker.patch("openctp_client.clients.md_client.mdapi")
+    mdapi = mocker.patch("openctp_client.apis.md_api.mdapi")
     api = mocker.Mock(name="api")
     mdapi.CThostFtdcMdApi.CreateFtdcMdApi.return_value = api
-    return MdClient(config)
+    return MdAPI(config)
 
 
 def test_should_get_spi_callback_when_set_spi_callback_to_md_client(config: CtpConfig, spi_callback):
-    client = MdClient(config)
+    client = MdAPI(config)
     client.set_spi_callback(CtpMethod.OnRspOrderInsert, spi_callback)
     callback = client.get_spi_callback(CtpMethod.OnRspOrderInsert)
     assert callback == spi_callback
 
 
 def test_should_get_none_when_del_spi_callback_from_md_client(config: CtpConfig, spi_callback):
-    client = MdClient(config)
+    client = MdAPI(config)
     client.set_spi_callback(CtpMethod.OnRspOrderInsert, spi_callback)
     client.del_spi_callback(CtpMethod.OnRspOrderInsert)
     callback = client.get_spi_callback(CtpMethod.OnRspOrderInsert)
@@ -31,7 +31,7 @@ def test_should_get_none_when_del_spi_callback_from_md_client(config: CtpConfig,
 
 
 # The fixture seems called by the order of they are required by the test function
-def test_should_call_Init_when_Connect(md_client: MdClient):
+def test_should_call_Init_when_Connect(md_client: MdAPI):
     md_client.Connect()
     md_client.api.Init.assert_called_once()
 

@@ -1,10 +1,10 @@
 from openctp_client.objects import *
 from openctp_client.objects.enums import CtpMethod
-from openctp_client.clients.md_client import MdClient
+from openctp_client.apis.md_api import MdAPI
 
 if __name__ == "__main__":
     config = CtpConfig("tcp://180.168.146.187:10211", "9999", "9999", "9999", "9999", "9999")
-    client = MdClient(config)
+    client = MdAPI(config)
     
     def connected(login_info: RspUserLoginField, rsp_info: RspInfoField, request_id: int, last: bool):
         print(f"connected: {login_info.TradingDay}")
