@@ -103,6 +103,37 @@ class TdClient(tdapi.CThostFtdcTraderSpi):
         self.callback(rsp)
     
     def ReqQryInstrument(self, qry_instrument: QryInstrumentField, req_id: int | None = None) -> int:
+        # TODO: use exception to throw the api error, and return the request_id
         req = qry_instrument.ctp_object()
         req_id = req_id or self.request_id
         return self._api.ReqQryInstrument(req, req_id)
+    
+    def OnRspQryInstrument(self, pInstrument: tdapi.CThostFtdcInstrumentField, pRspInfo, nRequestID, bIsLast):
+        rsp = RspQryInstrument(
+            RspQryInstrument=InstrumentField.from_ctp_object(pInstrument),
+            RspInfo=RspInfoField.from_ctp_object(pRspInfo),
+            RequestID=nRequestID,
+            IsLast=bIsLast
+        )
+        self.callback(rsp)
+    
+    def ReqOrderInsert(self, input_order: InputOrderField, req_id: int | None = None) -> None:
+        req = input_order.ctp_object()
+        req_id = req_id or self.request_id
+        return self._api.ReqOrderInsert(req, req_id)
+        
+    def OnRspOrderInsert(self, pInputOrder: tdapi.CThostFtdcInputOrderField, pRspInfo, nRequestID, bIsLast):
+        rsp = RspOrderInsert(
+            RspOrderInsert=InputOrderField.from_ctp_object(pInputOrder),
+            RspInfo=RspInfoField.from_ctp_object(pRspInfo),
+            RequestID=nRequestID,
+            IsLast=bIsLast
+        )
+        self.callback(rsp)
+    
+    def OnErrRtnOrderInsert(self, pInputOrder: tdapi.CThostFtdcInputOrderField, pRspInfo):
+        rsp = ErrRtnOrderInsert(
+            ErrRtnOrderInsert=InputOrderField.from_ctp_object(pInputOrder),
+            RspInfo=RspInfoField.from_ctp_object(pRspInfo),
+        )
+        self.callback(rsp)

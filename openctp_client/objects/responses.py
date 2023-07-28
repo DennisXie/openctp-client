@@ -8,7 +8,7 @@ class CtpResponse(BaseModel):
     
     RspInfo: RspInfoField = Field(default_factory=RspInfoField)
     RequestID: Optional[int] = None
-    IsLast: bool = True
+    IsLast: Optional[bool] = True
     
     @property
     def args(self) -> list[any]:
@@ -43,3 +43,31 @@ class RtnDepthMarketData(CtpResponse):
     @property
     def args(self) -> list[any]:
         return [self.DepthMarketData]
+
+
+class RspQryInstrument(CtpResponse):
+    method: CtpMethod = CtpMethod.OnRspQryInstrument
+    
+    Instrument: Optional[InstrumentField] = None
+    
+    @property
+    def args(self) -> list[any]:
+        return [self.Instrument, self.RspInfo, self.RequestID, self.IsLast]
+
+
+class RspOrderInsert(CtpResponse):
+    method: CtpMethod = CtpMethod.OnRspOrderInsert
+    
+    InputOrder: Optional[InputOrderField] = None
+    
+    @property
+    def args(self) -> list[any]:
+        return [self.InputOrder, self.RspInfo, self.RequestID, self.IsLast]
+
+
+class ErrRtnOrderInsert(RspOrderInsert):
+    method: CtpMethod = CtpMethod.OnErrRtnOrderInsert
+    
+    @property
+    def args(self) -> list[any]:
+        return [self.InputOrder, self.RspInfo]

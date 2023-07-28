@@ -275,3 +275,127 @@ class DepthMarketDataField(CtpField):
     )
     BandingUpperPrice: Optional[float] = Field(None, description='上带价')
     BandingLowerPrice: Optional[float] = Field(None, description='下带价')
+
+
+class InputOrderField(CtpField):
+    _ctp_type_ = tdapi.CThostFtdcInputOrderField
+    
+    BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
+    InvestorID: Optional[constr(max_length=13)] = Field(None, description='投资者代码')
+    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
+    OrderRef: Optional[constr(max_length=13)] = Field(None, description='报单引用')
+    UserID: Optional[constr(max_length=16)] = Field(None, description='用户代码')
+    OrderPriceType: Optional[constr(max_length=1)] = Field(None, description='报单价格条件')
+    Direction: Optional[constr(max_length=1)] = Field(None, description='买卖方向')
+    CombOffsetFlag: Optional[constr(max_length=5)] = Field(None, description='组合开平标志')
+    CombHedgeFlag: Optional[constr(max_length=5)] = Field(None, description='组合投机套保标志')
+    LimitPrice: Optional[float] = Field(None, description='价格')
+    VolumeTotalOriginal: Optional[int] = Field(None, description='数量')
+    TimeCondition: Optional[constr(max_length=1)] = Field(None, description='有效期类型')
+    GTDDate: Optional[constr(max_length=9)] = Field(None, description='GTD日期')
+    VolumeCondition: Optional[constr(max_length=1)] = Field(None, description='成交量类型')
+    MinVolume: Optional[int] = Field(None, description='最小成交量')
+    ContingentCondition: Optional[constr(max_length=1)] = Field(
+        None, description='触发条件'
+    )
+    StopPrice: Optional[float] = Field(None, description='止损价')
+    ForceCloseReason: Optional[constr(max_length=1)] = Field(None, description='强平原因')
+    IsAutoSuspend: Optional[int] = Field(None, description='自动挂起标志')
+    BusinessUnit: Optional[constr(max_length=21)] = Field(None, description='业务单元')
+    RequestID: Optional[int] = Field(None, description='请求编号')
+    UserForceClose: Optional[int] = Field(None, description='用户强评标志')
+    IsSwapOrder: Optional[int] = Field(None, description='互换单标志')
+    ExchangeID: Optional[constr(max_length=9)] = Field(None, description='交易所代码')
+    InvestUnitID: Optional[constr(max_length=17)] = Field(None, description='投资单元代码')
+    AccountID: Optional[constr(max_length=13)] = Field(None, description='资金账号')
+    CurrencyID: Optional[constr(max_length=4)] = Field(None, description='币种代码')
+    ClientID: Optional[constr(max_length=11)] = Field(None, description='交易编码')
+    reserve2: Optional[constr(max_length=16)] = Field(None, description='保留的无效字段')
+    MacAddress: Optional[constr(max_length=21)] = Field(None, description='Mac地址')
+    InstrumentID: Optional[constr(max_length=81)] = Field(None, description='合约代码')
+    IPAddress: Optional[constr(max_length=33)] = Field(None, description='IP地址')
+
+
+class OrderField(CtpField):
+    _ctp_type_ = tdapi.CThostFtdcOrderField
+    
+    BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
+    InvestorID: Optional[constr(max_length=13)] = Field(None, description='投资者代码')
+    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
+    OrderRef: Optional[constr(max_length=13)] = Field(None, description='报单引用')
+    UserID: Optional[constr(max_length=16)] = Field(None, description='用户代码')
+    OrderPriceType: Optional[constr(max_length=1)] = Field(None, description='报单价格条件')
+    Direction: Optional[constr(max_length=1)] = Field(None, description='买卖方向')
+    CombOffsetFlag: Optional[constr(max_length=5)] = Field(None, description='组合开平标志')
+    CombHedgeFlag: Optional[constr(max_length=5)] = Field(None, description='组合投机套保标志')
+    LimitPrice: Optional[float] = Field(None, description='价格')
+    VolumeTotalOriginal: Optional[int] = Field(None, description='数量')
+    TimeCondition: Optional[constr(max_length=1)] = Field(None, description='有效期类型')
+    GTDDate: Optional[constr(max_length=9)] = Field(None, description='GTD日期')
+    VolumeCondition: Optional[constr(max_length=1)] = Field(None, description='成交量类型')
+    MinVolume: Optional[int] = Field(None, description='最小成交量')
+    ContingentCondition: Optional[constr(max_length=1)] = Field(
+        None, description='触发条件'
+    )
+    StopPrice: Optional[float] = Field(None, description='止损价')
+    ForceCloseReason: Optional[constr(max_length=1)] = Field(None, description='强平原因')
+    IsAutoSuspend: Optional[int] = Field(None, description='自动挂起标志')
+    BusinessUnit: Optional[constr(max_length=21)] = Field(None, description='业务单元')
+    RequestID: Optional[int] = Field(None, description='请求编号')
+    OrderLocalID: Optional[constr(max_length=13)] = Field(None, description='本地报单编号')
+    ExchangeID: Optional[constr(max_length=9)] = Field(None, description='交易所代码')
+    ParticipantID: Optional[constr(max_length=11)] = Field(None, description='会员代码')
+    ClientID: Optional[constr(max_length=11)] = Field(None, description='客户代码')
+    reserve2: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
+    TraderID: Optional[constr(max_length=21)] = Field(None, description='交易所交易员代码')
+    InstallID: Optional[int] = Field(None, description='安装编号')
+    OrderSubmitStatus: Optional[constr(max_length=1)] = Field(
+        None, description='报单提交状态'
+    )
+    NotifySequence: Optional[int] = Field(None, description='报单提示序号')
+    TradingDay: Optional[constr(max_length=9)] = Field(None, description='交易日')
+    SettlementID: Optional[int] = Field(None, description='结算编号')
+    OrderSysID: Optional[constr(max_length=21)] = Field(None, description='报单编号')
+    OrderSource: Optional[constr(max_length=1)] = Field(None, description='报单来源')
+    OrderStatus: Optional[constr(max_length=1)] = Field(None, description='报单状态')
+    OrderType: Optional[constr(max_length=1)] = Field(None, description='报单类型')
+    VolumeTraded: Optional[int] = Field(None, description='今成交数量')
+    VolumeTotal: Optional[int] = Field(None, description='剩余数量')
+    InsertDate: Optional[constr(max_length=9)] = Field(None, description='报单日期')
+    InsertTime: Optional[constr(max_length=9)] = Field(None, description='委托时间')
+    ActiveTime: Optional[constr(max_length=9)] = Field(None, description='激活时间')
+    SuspendTime: Optional[constr(max_length=9)] = Field(None, description='挂起时间')
+    UpdateTime: Optional[constr(max_length=9)] = Field(None, description='最后修改时间')
+    CancelTime: Optional[constr(max_length=9)] = Field(None, description='撤销时间')
+    ActiveTraderID: Optional[constr(max_length=21)] = Field(
+        None, description='最后修改交易所交易员代码'
+    )
+    ClearingPartID: Optional[constr(max_length=11)] = Field(None, description='结算会员编号')
+    SequenceNo: Optional[int] = Field(None, description='序号')
+    FrontID: Optional[int] = Field(None, description='前置编号')
+    SessionID: Optional[int] = Field(None, description='会话编号')
+    UserProductInfo: Optional[constr(max_length=11)] = Field(
+        None, description='用户端产品信息'
+    )
+    StatusMsg: Optional[constr(max_length=81)] = Field(None, description='状态信息')
+    UserForceClose: Optional[int] = Field(None, description='用户强评标志')
+    ActiveUserID: Optional[constr(max_length=16)] = Field(None, description='操作用户代码')
+    BrokerOrderSeq: Optional[int] = Field(None, description='经纪公司报单编号')
+    RelativeOrderSysID: Optional[constr(max_length=21)] = Field(
+        None, description='相关报单'
+    )
+    ZCETotalTradedVolume: Optional[int] = Field(None, description='郑商所成交数量')
+    IsSwapOrder: Optional[int] = Field(None, description='互换单标志')
+    BranchID: Optional[constr(max_length=9)] = Field(None, description='营业部编号')
+    InvestUnitID: Optional[constr(max_length=17)] = Field(None, description='投资单元代码')
+    AccountID: Optional[constr(max_length=13)] = Field(None, description='资金账号')
+    CurrencyID: Optional[constr(max_length=4)] = Field(None, description='币种代码')
+    reserve3: Optional[constr(max_length=16)] = Field(None, description='保留的无效字段')
+    MacAddress: Optional[constr(max_length=21)] = Field(None, description='Mac地址')
+    InstrumentID: Optional[constr(max_length=81)] = Field(None, description='合约代码')
+    ExchangeInstID: Optional[constr(max_length=81)] = Field(
+        None, description='合约在交易所的代码'
+    )
+    IPAddress: Optional[constr(max_length=33)] = Field(None, description='IP地址')
+
+

@@ -33,23 +33,23 @@ def test_should_set_callback(td_client: TdClient, spi_callback):
 
 def test_should_get_spi_callback_when_set_spi_callback_to_td_client(config: CtpConfig, spi_callback):
     td_client = TdClient(config)
-    td_client.set_spi_callback(CtpMethod.OnOrderInsert, spi_callback)
-    callback = td_client.get_spi_callback(CtpMethod.OnOrderInsert)
+    td_client.set_spi_callback(CtpMethod.OnRspOrderInsert, spi_callback)
+    callback = td_client.get_spi_callback(CtpMethod.OnRspOrderInsert)
     assert callback is spi_callback
 
 
 def test_should_get_none_when_spi_callback_not_set(config: CtpConfig, spi_callback):
     td_client = TdClient(config)
     td_client.set_spi_callback(CtpMethod.OnRtnTrade, spi_callback)
-    callback = td_client.get_spi_callback(CtpMethod.OnOrderInsert)
+    callback = td_client.get_spi_callback(CtpMethod.OnRspOrderInsert)
     assert callback is None
 
 
 def test_should_get_none_when_del_spi_callback_from_md_client(config: CtpConfig, spi_callback):
     td_client = TdClient(config)
-    td_client.set_spi_callback(CtpMethod.OnOrderInsert, spi_callback)
-    deleted_callback = td_client.del_spi_callback(CtpMethod.OnOrderInsert)
-    callback = td_client.get_spi_callback(CtpMethod.OnOrderInsert)
+    td_client.set_spi_callback(CtpMethod.OnRspOrderInsert, spi_callback)
+    deleted_callback = td_client.del_spi_callback(CtpMethod.OnRspOrderInsert)
+    callback = td_client.get_spi_callback(CtpMethod.OnRspOrderInsert)
     assert deleted_callback is spi_callback
     assert callback is None
 
@@ -108,3 +108,42 @@ def test_should_call_api_ReqQryInstrument_when_ReqQryInstrument(td_client: TdCli
     req = QryInstrumentField()
     td_client.ReqQryInstrument(req)
     td_client.api.ReqQryInstrument.assert_called_once()
+
+
+def test_should_call_callback_when_OnRspQryInstrument(td_client: TdClient, spi_callback):
+    # given
+    td_client.set_spi_callback(CtpMethod.OnRspQryInstrument, spi_callback)
+    pInstrument = tdapi.CThostFtdcInstrumentField()
+    pRspInfo = tdapi.CThostFtdcRspInfoField()
+    # when
+    td_client.OnRspQryInstrument(pInstrument, pRspInfo, 2, True)
+    # should
+    spi_callback.assert_called_once()
+
+
+def test_should_call_api_ReqOrderInsert_when_ReqOrderInsert(td_client: TdClient):
+    req = InputOrderField()
+    td_client.ReqOrderInsert(req)
+    td_client.api.ReqOrderInsert.assert_called_once()
+
+
+def test_should_call_callback_when_OnRspOrderInsert(td_client: TdClient, spi_callback):
+    # given
+    td_client.set_spi_callback(CtpMethod.OnRspOrderInsert, spi_callback)
+    pInputOrder = tdapi.CThostFtdcInputOrderField()
+    pRspInfo = tdapi.CThostFtdcRspInfoField()
+    # when
+    td_client.OnRspOrderInsert(pInputOrder, pRspInfo, 2, True)
+    # should
+    spi_callback.assert_called_once()
+
+
+def test_should_call_callback_when_OnErrRtnOrderInsert(td_client: TdClient, spi_callback):
+    # given
+    td_client.set_spi_callback(CtpMethod.OnErrRtnOrderInsert, spi_callback)
+    pInputOrder = tdapi.CThostFtdcInputOrderField()
+    pRspInfo = tdapi.CThostFtdcRspInfoField()
+    # when
+    td_client.OnErrRtnOrderInsert(pInputOrder, pRspInfo)
+    # should
+    spi_callback.assert_called_once()

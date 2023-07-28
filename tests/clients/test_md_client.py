@@ -17,16 +17,16 @@ def md_client(config: CtpConfig, mocker: MockerFixture):
 
 def test_should_get_spi_callback_when_set_spi_callback_to_md_client(config: CtpConfig, spi_callback):
     client = MdClient(config)
-    client.set_spi_callback(CtpMethod.OnOrderInsert, spi_callback)
-    callback = client.get_spi_callback(CtpMethod.OnOrderInsert)
+    client.set_spi_callback(CtpMethod.OnRspOrderInsert, spi_callback)
+    callback = client.get_spi_callback(CtpMethod.OnRspOrderInsert)
     assert callback == spi_callback
 
 
 def test_should_get_none_when_del_spi_callback_from_md_client(config: CtpConfig, spi_callback):
     client = MdClient(config)
-    client.set_spi_callback(CtpMethod.OnOrderInsert, spi_callback)
-    client.del_spi_callback(CtpMethod.OnOrderInsert)
-    callback = client.get_spi_callback(CtpMethod.OnOrderInsert)
+    client.set_spi_callback(CtpMethod.OnRspOrderInsert, spi_callback)
+    client.del_spi_callback(CtpMethod.OnRspOrderInsert)
+    callback = client.get_spi_callback(CtpMethod.OnRspOrderInsert)
     assert callback is None
 
 
