@@ -123,6 +123,7 @@ class TdClient(tdapi.CThostFtdcTraderSpi):
         return self._api.ReqOrderInsert(req, req_id)
         
     def OnRspOrderInsert(self, pInputOrder: tdapi.CThostFtdcInputOrderField, pRspInfo, nRequestID, bIsLast):
+        """Error raised by the CTP"""
         rsp = RspOrderInsert(
             RspOrderInsert=InputOrderField.from_ctp_object(pInputOrder),
             RspInfo=RspInfoField.from_ctp_object(pRspInfo),
@@ -132,6 +133,7 @@ class TdClient(tdapi.CThostFtdcTraderSpi):
         self.callback(rsp)
     
     def OnErrRtnOrderInsert(self, pInputOrder: tdapi.CThostFtdcInputOrderField, pRspInfo):
+        """Error raised by the exchange"""
         rsp = ErrRtnOrderInsert(
             ErrRtnOrderInsert=InputOrderField.from_ctp_object(pInputOrder),
             RspInfo=RspInfoField.from_ctp_object(pRspInfo),
@@ -139,6 +141,7 @@ class TdClient(tdapi.CThostFtdcTraderSpi):
         self.callback(rsp)
     
     def OnRtnOrder(self, pOrder: tdapi.CThostFtdcOrderField):
+        """Success order insert or order action"""
         rsp = RtnOrder(
             RtnOrder=OrderField.from_ctp_object(pOrder),
         )
@@ -147,5 +150,28 @@ class TdClient(tdapi.CThostFtdcTraderSpi):
     def OnRtnTrade(self, pTrade: tdapi.CThostFtdcTradeField):
         rsp = RtnTrade(
             RtnTrade=TradeField.from_ctp_object(pTrade),
+        )
+        self.callback(rsp)
+    
+    def ReqOrderAction(self, input_order_action: InputOrderActionField, req_id: int | None = None) -> None:
+        req = input_order_action.ctp_object()
+        req_id = req_id or self.request_id
+        return self._api.ReqOrderAction(req, req_id)
+    
+    def OnRspOrderAction(self, pInputOrderAction: tdapi.CThostFtdcInputOrderActionField, pRspInfo, nRequestID, bIsLast):
+        """Error raised by the CTP"""
+        rsp = RspOrderAction(
+            RspOrderAction=InputOrderActionField.from_ctp_object(pInputOrderAction),
+            RspInfo=RspInfoField.from_ctp_object(pRspInfo),
+            RequestID=nRequestID,
+            IsLast=bIsLast
+        )
+        self.callback(rsp)
+    
+    def OnErrRtnOrderAction(self, pInputOrderAction: tdapi.CThostFtdcInputOrderActionField, pRspInfo):
+        """Error raised by the exchange"""
+        rsp = ErrRtnOrderAction(
+            ErrRtnOrderAction=InputOrderActionField.from_ctp_object(pInputOrderAction),
+            RspInfo=RspInfoField.from_ctp_object(pRspInfo),
         )
         self.callback(rsp)

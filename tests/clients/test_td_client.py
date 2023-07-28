@@ -167,3 +167,31 @@ def test_should_call_callback_when_OnRtnTrade(td_client: TdClient, spi_callback)
     td_client.OnRtnTrade(pTrade)
     # should
     spi_callback.assert_called_once()
+
+
+def test_should_call_api_ReqOrderAction_when_ReqOrderAction(td_client: TdClient):
+    req = InputOrderActionField()
+    td_client.ReqOrderAction(req)
+    td_client.api.ReqOrderAction.assert_called_once()
+
+
+def test_should_call_callback_when_OnRspOrderAction(td_client: TdClient, spi_callback):
+    # given
+    td_client.set_spi_callback(CtpMethod.OnRspOrderAction, spi_callback)
+    pInputOrderAction = tdapi.CThostFtdcInputOrderActionField()
+    pRspInfo = tdapi.CThostFtdcRspInfoField()
+    # when
+    td_client.OnRspOrderAction(pInputOrderAction, pRspInfo, 2, True)
+    # should
+    spi_callback.assert_called_once()
+    
+
+def test_should_call_callback_when_OnErrRtnOrderAction(td_client: TdClient, spi_callback):
+    # given
+    td_client.set_spi_callback(CtpMethod.OnErrRtnOrderAction, spi_callback)
+    pOrderAction = tdapi.CThostFtdcOrderActionField()
+    pRspInfo = tdapi.CThostFtdcRspInfoField()
+    # when
+    td_client.OnErrRtnOrderAction(pOrderAction, pRspInfo)
+    # should
+    spi_callback.assert_called_once()

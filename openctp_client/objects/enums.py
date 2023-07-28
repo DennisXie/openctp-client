@@ -17,6 +17,9 @@ class CtpMethod(Enum):
     OnRtnOrder = auto()
     OnErrRtnOrderInsert = auto()
     OnRtnTrade = auto()
+    ReqOrderAction = auto()
+    OnRspOrderAction = auto()
+    OnErrRtnOrderAction = auto()
     
     @classmethod
     def nameOf(cls, name):

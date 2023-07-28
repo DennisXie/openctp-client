@@ -91,3 +91,23 @@ class RtnTrade(CtpResponse):
     @property
     def args(self) -> list[any]:
         return [self.Trade]
+
+
+class RspOrderAction(CtpResponse):
+    method: CtpMethod = CtpMethod.OnRspOrderAction
+    
+    InputOrderAction: Optional[InputOrderActionField] = None
+    
+    @property
+    def args(self) -> list[any]:
+        return [self.InputOrderAction, self.RspInfo, self.RequestID, self.IsLast]
+
+
+class ErrRtnOrderAction(CtpResponse):
+    method: CtpMethod = CtpMethod.OnErrRtnOrderAction
+    
+    OrderAction: Optional[OrderActionField] = None
+    
+    @property
+    def args(self) -> list[any]:
+        return [self.OrderAction, self.RspInfo]
