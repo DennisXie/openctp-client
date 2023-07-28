@@ -399,3 +399,42 @@ class OrderField(CtpField):
     IPAddress: Optional[constr(max_length=33)] = Field(None, description='IP地址')
 
 
+class TradeField(CtpField):
+    _ctp_type_ = tdapi.CThostFtdcTradeField
+    
+    BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
+    InvestorID: Optional[constr(max_length=13)] = Field(None, description='投资者代码')
+    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
+    OrderRef: Optional[constr(max_length=13)] = Field(None, description='报单引用')
+    UserID: Optional[constr(max_length=16)] = Field(None, description='用户代码')
+    ExchangeID: Optional[constr(max_length=9)] = Field(None, description='交易所代码')
+    TradeID: Optional[constr(max_length=21)] = Field(None, description='成交编号')
+    Direction: Optional[constr(max_length=1)] = Field(None, description='买卖方向')
+    OrderSysID: Optional[constr(max_length=21)] = Field(None, description='报单编号')
+    ParticipantID: Optional[constr(max_length=11)] = Field(None, description='会员代码')
+    ClientID: Optional[constr(max_length=11)] = Field(None, description='客户代码')
+    TradingRole: Optional[constr(max_length=1)] = Field(None, description='交易角色')
+    reserve2: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
+    OffsetFlag: Optional[constr(max_length=1)] = Field(None, description='开平标志')
+    HedgeFlag: Optional[constr(max_length=1)] = Field(None, description='投机套保标志')
+    Price: Optional[float] = Field(None, description='价格')
+    Volume: Optional[int] = Field(None, description='数量')
+    TradeDate: Optional[constr(max_length=9)] = Field(None, description='成交时期')
+    TradeTime: Optional[constr(max_length=9)] = Field(None, description='成交时间')
+    TradeType: Optional[constr(max_length=1)] = Field(None, description='成交类型')
+    PriceSource: Optional[constr(max_length=1)] = Field(None, description='成交价来源')
+    TraderID: Optional[constr(max_length=21)] = Field(None, description='交易所交易员代码')
+    OrderLocalID: Optional[constr(max_length=13)] = Field(None, description='本地报单编号')
+    ClearingPartID: Optional[constr(max_length=11)] = Field(None, description='结算会员编号')
+    BusinessUnit: Optional[constr(max_length=21)] = Field(None, description='业务单元')
+    SequenceNo: Optional[int] = Field(None, description='序号')
+    TradingDay: Optional[constr(max_length=9)] = Field(None, description='交易日')
+    SettlementID: Optional[int] = Field(None, description='结算编号')
+    BrokerOrderSeq: Optional[int] = Field(None, description='经纪公司报单编号')
+    TradeSource: Optional[constr(max_length=1)] = Field(None, description='成交来源')
+    InvestUnitID: Optional[constr(max_length=17)] = Field(None, description='投资单元代码')
+    InstrumentID: Optional[constr(max_length=81)] = Field(None, description='合约代码')
+    ExchangeInstID: Optional[constr(max_length=81)] = Field(
+        None, description='合约在交易所的代码'
+    )
+

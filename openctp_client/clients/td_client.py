@@ -137,3 +137,15 @@ class TdClient(tdapi.CThostFtdcTraderSpi):
             RspInfo=RspInfoField.from_ctp_object(pRspInfo),
         )
         self.callback(rsp)
+    
+    def OnRtnOrder(self, pOrder: tdapi.CThostFtdcOrderField):
+        rsp = RtnOrder(
+            RtnOrder=OrderField.from_ctp_object(pOrder),
+        )
+        self.callback(rsp)
+    
+    def OnRtnTrade(self, pTrade: tdapi.CThostFtdcTradeField):
+        rsp = RtnTrade(
+            RtnTrade=TradeField.from_ctp_object(pTrade),
+        )
+        self.callback(rsp)

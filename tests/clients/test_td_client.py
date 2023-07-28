@@ -147,3 +147,23 @@ def test_should_call_callback_when_OnErrRtnOrderInsert(td_client: TdClient, spi_
     td_client.OnErrRtnOrderInsert(pInputOrder, pRspInfo)
     # should
     spi_callback.assert_called_once()
+
+
+def test_should_call_callback_when_OnRtnOrder(td_client: TdClient, spi_callback):
+    # given
+    td_client.set_spi_callback(CtpMethod.OnRtnOrder, spi_callback)
+    pOrder = tdapi.CThostFtdcOrderField()
+    # when
+    td_client.OnRtnOrder(pOrder)
+    # should
+    spi_callback.assert_called_once()
+
+
+def test_should_call_callback_when_OnRtnTrade(td_client: TdClient, spi_callback):
+    # given
+    td_client.set_spi_callback(CtpMethod.OnRtnTrade, spi_callback)
+    pTrade = tdapi.CThostFtdcTradeField()
+    # when
+    td_client.OnRtnTrade(pTrade)
+    # should
+    spi_callback.assert_called_once()

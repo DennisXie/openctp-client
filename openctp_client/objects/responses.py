@@ -71,3 +71,23 @@ class ErrRtnOrderInsert(RspOrderInsert):
     @property
     def args(self) -> list[any]:
         return [self.InputOrder, self.RspInfo]
+
+
+class RtnOrder(CtpResponse):
+    method: CtpMethod = CtpMethod.OnRtnOrder
+    
+    Order: Optional[OrderField] = None
+    
+    @property
+    def args(self) -> list[any]:
+        return [self.Order]
+
+
+class RtnTrade(CtpResponse):
+    method: CtpMethod = CtpMethod.OnRtnTrade
+    
+    Trade: Optional[TradeField] = None
+    
+    @property
+    def args(self) -> list[any]:
+        return [self.Trade]

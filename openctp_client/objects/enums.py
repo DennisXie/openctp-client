@@ -11,11 +11,12 @@ class CtpMethod(Enum):
 
     ReqSettlementInfoConfirm = auto()
     OnRspSettlementInfoConfirm = auto()
-    OnRtnTrade = auto()
     OnRspQryInstrument = auto()
     ReqOrderInsert = auto()
     OnRspOrderInsert = auto()
+    OnRtnOrder = auto()
     OnErrRtnOrderInsert = auto()
+    OnRtnTrade = auto()
     
     @classmethod
     def nameOf(cls, name):
