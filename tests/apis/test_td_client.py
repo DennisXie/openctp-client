@@ -78,8 +78,9 @@ def test_should_call_api_ReqUserLogin_when_OnRspAuthenticate_success(td_client: 
     td_client.api.ReqUserLogin.assert_called_once()
 
 
-def test_should_xx_when_OnRspAuthenticate_fail(td_client: TdAPI):
+def test_should_call_callback_when_OnRspAuthenticate_fail(td_client: TdAPI, spi_callback):
     # given
+    td_client.set_spi_callback(CtpMethod.OnRspAuthenticate, spi_callback)
     authenticate = tdapi.CThostFtdcRspAuthenticateField()
     rsp_info = tdapi.CThostFtdcRspInfoField()
     rsp_info.ErrorID = 1
@@ -89,8 +90,7 @@ def test_should_xx_when_OnRspAuthenticate_fail(td_client: TdAPI):
     td_client.OnRspAuthenticate(authenticate, rsp_info, 1, True)
     
     # then
-    td_client.api.ReqUserLogin.assert_not_called()
-    # TODO: assert authentication failed notification is sent
+    spi_callback.assert_called_once()
 
 
 def test_should_call_callback_when_OnRspUserLogin(td_client: TdAPI, spi_callback):

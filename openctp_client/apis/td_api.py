@@ -75,7 +75,7 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
         if pRspInfo is None or pRspInfo.ErrorID == 0:
             self._login()
         else:
-            self._authenticate_failed(pRspInfo)
+            self._authenticate_failed(pRspInfo, nRequestID, bIsLast)
     
     def _login(self) -> None:
         req = tdapi.CThostFtdcReqUserLoginField()
@@ -84,9 +84,13 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
         req.Password = self.config.password
         self._api.ReqUserLogin(req, self.request_id)
     
-    def _authenticate_failed(self, pRspInfo) -> None:
-        # TODO: how to notify upstream that authentication failed?
-        pass
+    def _authenticate_failed(self, pRspInfo, nRequestID, bIsLast) -> None:
+        rsp = RspAuthenticate(
+            RspInfo=RspInfoField.from_ctp_object(pRspInfo),
+            RequestID=nRequestID,
+            IsLast=bIsLast
+        )
+        self.callback(rsp)
     
     def OnRspUserLogin(self, pRspUserLogin, pRspInfo, nRequestID, bIsLast):
         """called when login responding"""

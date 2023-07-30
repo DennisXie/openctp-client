@@ -13,6 +13,7 @@ class CtpMethod(Enum):
     OnRtnDepthMarketData = auto()
 
     # Used by td
+    OnRspAuthenticate = auto()
     ReqSettlementInfoConfirm = auto()
     OnRspSettlementInfoConfirm = auto()
     ReqQryInstrument = auto()

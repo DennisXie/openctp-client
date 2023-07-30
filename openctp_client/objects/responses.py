@@ -15,6 +15,14 @@ class CtpResponse(BaseModel):
         return []
 
 
+class RspAuthenticate(CtpResponse):
+    method: CtpMethod = CtpMethod.OnRspAuthenticate
+    
+    @property
+    def args(self) -> list[any]:
+        return [self.RspInfo, self.RequestID, self.IsLast]
+
+
 class RspUserLogin(CtpResponse):
     method: CtpMethod = CtpMethod.OnRspUserLogin
 
