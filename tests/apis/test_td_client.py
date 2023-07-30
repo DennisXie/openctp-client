@@ -1,7 +1,7 @@
 import pytest
 from pytest_mock import MockerFixture
-from openctp_ctp import tdapi
 
+from openctp_client.openctp import tdapi
 from openctp_client.apis.td_api import TdAPI
 from openctp_client.objects import *
 

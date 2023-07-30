@@ -1,5 +1,5 @@
 from typing import Any, Callable, Optional, Tuple
-from openctp_ctp import mdapi
+from ..openctp import mdapi
 
 from ..objects.config import CtpConfig
 from ..objects.enums import CtpMethod
