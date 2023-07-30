@@ -111,3 +111,43 @@ class ErrRtnOrderAction(CtpResponse):
     @property
     def args(self) -> list[any]:
         return [self.OrderAction, self.RspInfo]
+
+
+class RspQryInvestorPosition(CtpResponse):
+    method: CtpMethod = CtpMethod.OnRspQryInvestorPosition
+    
+    InvestorPosition: Optional[InvestorPositionField] = None
+    
+    @property
+    def args(self) -> list[any]:
+        return [self.InvestorPosition, self.RspInfo, self.RequestID, self.IsLast]
+
+
+class RspQryTradingAccount(CtpResponse):
+    method: CtpMethod = CtpMethod.OnRspQryTradingAccount
+    
+    TradingAccount: Optional[TradingAccountField] = None
+    
+    @property
+    def args(self) -> list[any]:
+        return [self.TradingAccount, self.RspInfo, self.RequestID, self.IsLast]
+
+
+class RspQryTrade(CtpResponse):
+    method: CtpMethod = CtpMethod.OnRspQryTrade
+    
+    Trade: Optional[TradeField] = None
+    
+    @property
+    def args(self) -> list[any]:
+        return [self.Trade, self.RspInfo, self.RequestID, self.IsLast]
+
+
+class RspQryOrder(CtpResponse):
+    method: CtpMethod = CtpMethod.OnRspQryOrder
+    
+    Order: Optional[OrderField] = None
+    
+    @property
+    def args(self) -> list[any]:
+        return [self.Order, self.RspInfo, self.RequestID, self.IsLast]

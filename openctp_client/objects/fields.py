@@ -500,3 +500,169 @@ class OrderActionField(CtpField):
     InstrumentID: Optional[constr(max_length=81)] = Field(None, description='合约代码')
     IPAddress: Optional[constr(max_length=33)] = Field(None, description='IP地址')
 
+
+class QryOrderField(CtpField):
+    _ctp_type_ = tdapi.CThostFtdcQryOrderField
+    
+    BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
+    InvestorID: Optional[constr(max_length=13)] = Field(None, description='投资者代码')
+    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
+    ExchangeID: Optional[constr(max_length=9)] = Field(None, description='交易所代码')
+    OrderSysID: Optional[constr(max_length=21)] = Field(None, description='报单编号')
+    InsertTimeStart: Optional[constr(max_length=9)] = Field(None, description='开始时间')
+    InsertTimeEnd: Optional[constr(max_length=9)] = Field(None, description='结束时间')
+    InvestUnitID: Optional[constr(max_length=17)] = Field(None, description='投资单元代码')
+    InstrumentID: Optional[constr(max_length=81)] = Field(None, description='合约代码')
+
+
+class QryTradeField(CtpField):
+    _ctp_type_ = tdapi.CThostFtdcQryTradeField
+    
+    BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
+    InvestorID: Optional[constr(max_length=13)] = Field(None, description='投资者代码')
+    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
+    ExchangeID: Optional[constr(max_length=9)] = Field(None, description='交易所代码')
+    TradeID: Optional[constr(max_length=21)] = Field(None, description='成交编号')
+    TradeTimeStart: Optional[constr(max_length=9)] = Field(None, description='开始时间')
+    TradeTimeEnd: Optional[constr(max_length=9)] = Field(None, description='结束时间')
+    InvestUnitID: Optional[constr(max_length=17)] = Field(None, description='投资单元代码')
+    InstrumentID: Optional[constr(max_length=81)] = Field(None, description='合约代码')
+
+
+class QryInvestorPositionField(CtpField):
+    _ctp_type_ = tdapi.CThostFtdcQryInvestorPositionField
+    
+    BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
+    InvestorID: Optional[constr(max_length=13)] = Field(None, description='投资者代码')
+    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
+    ExchangeID: Optional[constr(max_length=9)] = Field(None, description='交易所代码')
+    InvestUnitID: Optional[constr(max_length=17)] = Field(None, description='投资单元代码')
+    InstrumentID: Optional[constr(max_length=81)] = Field(None, description='合约代码')
+
+
+class QryTradingAccountField(CtpField):
+    _ctp_type_ = tdapi.CThostFtdcQryTradingAccountField
+    
+    BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
+    InvestorID: Optional[constr(max_length=13)] = Field(None, description='投资者代码')
+    CurrencyID: Optional[constr(max_length=4)] = Field(None, description='币种代码')
+    BizType: Optional[constr(max_length=1)] = Field(None, description='业务类型')
+    AccountID: Optional[constr(max_length=13)] = Field(None, description='投资者帐号')
+
+
+class QryInvestorField(CtpField):
+    _ctp_type_ = tdapi.CThostFtdcQryInvestorField
+    
+    BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
+    InvestorID: Optional[constr(max_length=13)] = Field(None, description='投资者代码')
+
+
+class TradingAccountField(CtpField):
+    _ctp_type_ = tdapi.CThostFtdcTradingAccountField
+    
+    BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
+    AccountID: Optional[constr(max_length=13)] = Field(None, description='投资者帐号')
+    PreMortgage: Optional[float] = Field(None, description='上次质押金额')
+    PreCredit: Optional[float] = Field(None, description='上次信用额度')
+    PreDeposit: Optional[float] = Field(None, description='上次存款额')
+    PreBalance: Optional[float] = Field(None, description='上次结算准备金')
+    PreMargin: Optional[float] = Field(None, description='上次占用的保证金')
+    InterestBase: Optional[float] = Field(None, description='利息基数')
+    Interest: Optional[float] = Field(None, description='利息收入')
+    Deposit: Optional[float] = Field(None, description='入金金额')
+    Withdraw: Optional[float] = Field(None, description='出金金额')
+    FrozenMargin: Optional[float] = Field(None, description='冻结的保证金')
+    FrozenCash: Optional[float] = Field(None, description='冻结的资金')
+    FrozenCommission: Optional[float] = Field(None, description='冻结的手续费')
+    CurrMargin: Optional[float] = Field(None, description='当前保证金总额')
+    CashIn: Optional[float] = Field(None, description='资金差额')
+    Commission: Optional[float] = Field(None, description='手续费')
+    CloseProfit: Optional[float] = Field(None, description='平仓盈亏')
+    PositionProfit: Optional[float] = Field(None, description='持仓盈亏')
+    Balance: Optional[float] = Field(None, description='期货结算准备金')
+    Available: Optional[float] = Field(None, description='可用资金')
+    WithdrawQuota: Optional[float] = Field(None, description='可取资金')
+    Reserve: Optional[float] = Field(None, description='基本准备金')
+    TradingDay: Optional[constr(max_length=9)] = Field(None, description='交易日')
+    SettlementID: Optional[int] = Field(None, description='结算编号')
+    Credit: Optional[float] = Field(None, description='信用额度')
+    Mortgage: Optional[float] = Field(None, description='质押金额')
+    ExchangeMargin: Optional[float] = Field(None, description='交易所保证金')
+    DeliveryMargin: Optional[float] = Field(None, description='投资者交割保证金')
+    ExchangeDeliveryMargin: Optional[float] = Field(None, description='交易所交割保证金')
+    ReserveBalance: Optional[float] = Field(None, description='保底期货结算准备金')
+    CurrencyID: Optional[constr(max_length=4)] = Field(None, description='币种代码')
+    PreFundMortgageIn: Optional[float] = Field(None, description='上次货币质入金额')
+    PreFundMortgageOut: Optional[float] = Field(None, description='上次货币质出金额')
+    FundMortgageIn: Optional[float] = Field(None, description='货币质入金额')
+    FundMortgageOut: Optional[float] = Field(None, description='货币质出金额')
+    FundMortgageAvailable: Optional[float] = Field(None, description='货币质押余额')
+    MortgageableFund: Optional[float] = Field(None, description='可质押货币金额')
+    SpecProductMargin: Optional[float] = Field(None, description='特殊产品占用保证金')
+    SpecProductFrozenMargin: Optional[float] = Field(None, description='特殊产品冻结保证金')
+    SpecProductCommission: Optional[float] = Field(None, description='特殊产品手续费')
+    SpecProductFrozenCommission: Optional[float] = Field(None, description='特殊产品冻结手续费')
+    SpecProductPositionProfit: Optional[float] = Field(None, description='特殊产品持仓盈亏')
+    SpecProductCloseProfit: Optional[float] = Field(None, description='特殊产品平仓盈亏')
+    SpecProductPositionProfitByAlg: Optional[float] = Field(
+        None, description='根据持仓盈亏算法计算的特殊产品持仓盈亏'
+    )
+    SpecProductExchangeMargin: Optional[float] = Field(None, description='特殊产品交易所保证金')
+    BizType: Optional[constr(max_length=1)] = Field(None, description='业务类型')
+    FrozenSwap: Optional[float] = Field(None, description='延时换汇冻结金额')
+    RemainSwap: Optional[float] = Field(None, description='剩余换汇额度')
+
+
+class InvestorPositionField(CtpField):
+    _ctp_type_ = tdapi.CThostFtdcInvestorPositionField
+    
+    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
+    BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
+    InvestorID: Optional[constr(max_length=13)] = Field(None, description='投资者代码')
+    PosiDirection: Optional[constr(max_length=1)] = Field(None, description='持仓多空方向')
+    HedgeFlag: Optional[constr(max_length=1)] = Field(None, description='投机套保标志')
+    PositionDate: Optional[constr(max_length=1)] = Field(None, description='持仓日期')
+    YdPosition: Optional[int] = Field(None, description='上日持仓')
+    Position: Optional[int] = Field(None, description='今日持仓')
+    LongFrozen: Optional[int] = Field(None, description='多头冻结')
+    ShortFrozen: Optional[int] = Field(None, description='空头冻结')
+    LongFrozenAmount: Optional[float] = Field(None, description='开仓冻结金额')
+    ShortFrozenAmount: Optional[float] = Field(None, description='开仓冻结金额')
+    OpenVolume: Optional[int] = Field(None, description='开仓量')
+    CloseVolume: Optional[int] = Field(None, description='平仓量')
+    OpenAmount: Optional[float] = Field(None, description='开仓金额')
+    CloseAmount: Optional[float] = Field(None, description='平仓金额')
+    PositionCost: Optional[float] = Field(None, description='持仓成本')
+    PreMargin: Optional[float] = Field(None, description='上次占用的保证金')
+    UseMargin: Optional[float] = Field(None, description='占用的保证金')
+    FrozenMargin: Optional[float] = Field(None, description='冻结的保证金')
+    FrozenCash: Optional[float] = Field(None, description='冻结的资金')
+    FrozenCommission: Optional[float] = Field(None, description='冻结的手续费')
+    CashIn: Optional[float] = Field(None, description='资金差额')
+    Commission: Optional[float] = Field(None, description='手续费')
+    CloseProfit: Optional[float] = Field(None, description='平仓盈亏')
+    PositionProfit: Optional[float] = Field(None, description='持仓盈亏')
+    PreSettlementPrice: Optional[float] = Field(None, description='上次结算价')
+    SettlementPrice: Optional[float] = Field(None, description='本次结算价')
+    TradingDay: Optional[constr(max_length=9)] = Field(None, description='交易日')
+    SettlementID: Optional[int] = Field(None, description='结算编号')
+    OpenCost: Optional[float] = Field(None, description='开仓成本')
+    ExchangeMargin: Optional[float] = Field(None, description='交易所保证金')
+    CombPosition: Optional[int] = Field(None, description='组合成交形成的持仓')
+    CombLongFrozen: Optional[int] = Field(None, description='组合多头冻结')
+    CombShortFrozen: Optional[int] = Field(None, description='组合空头冻结')
+    CloseProfitByDate: Optional[float] = Field(None, description='逐日盯市平仓盈亏')
+    CloseProfitByTrade: Optional[float] = Field(None, description='逐笔对冲平仓盈亏')
+    TodayPosition: Optional[int] = Field(None, description='今日持仓')
+    MarginRateByMoney: Optional[float] = Field(None, description='保证金率')
+    MarginRateByVolume: Optional[float] = Field(None, description='保证金率(按手数)')
+    StrikeFrozen: Optional[int] = Field(None, description='执行冻结')
+    StrikeFrozenAmount: Optional[float] = Field(None, description='执行冻结金额')
+    AbandonFrozen: Optional[int] = Field(None, description='放弃执行冻结')
+    ExchangeID: Optional[constr(max_length=9)] = Field(None, description='交易所代码')
+    YdStrikeFrozen: Optional[int] = Field(None, description='执行冻结的昨仓')
+    InvestUnitID: Optional[constr(max_length=17)] = Field(None, description='投资单元代码')
+    PositionCostOffset: Optional[float] = Field(None, description='大商所持仓成本差值，只有大商所使用')
+    TasPosition: Optional[int] = Field(None, description='tas持仓手数')
+    TasPositionCost: Optional[float] = Field(None, description='tas持仓成本')
+    InstrumentID: Optional[constr(max_length=81)] = Field(None, description='合约代码')

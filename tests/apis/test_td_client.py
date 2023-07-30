@@ -195,3 +195,71 @@ def test_should_call_callback_when_OnErrRtnOrderAction(td_client: TdAPI, spi_cal
     td_client.OnErrRtnOrderAction(pOrderAction, pRspInfo)
     # should
     spi_callback.assert_called_once()
+
+
+def test_should_call_api_ReqQryTradingAccount_when_ReqQryTradingAccount(td_client: TdAPI):
+    req = QryTradingAccountField()
+    td_client.ReqQryTradingAccount(req)
+    td_client.api.ReqQryTradingAccount.assert_called_once()
+
+
+def test_should_call_callback_when_OnRspQryTradingAccount(td_client: TdAPI, spi_callback):
+    # given
+    td_client.set_spi_callback(CtpMethod.OnRspQryTradingAccount, spi_callback)
+    pTradingAccount = tdapi.CThostFtdcTradingAccountField()
+    pRspInfo = tdapi.CThostFtdcRspInfoField()
+    # when
+    td_client.OnRspQryTradingAccount(pTradingAccount, pRspInfo, 2, True)
+    # should
+    spi_callback.assert_called_once()
+
+
+def test_should_call_api_ReqQryInvestorPosition_when_ReqQryInvestorPosition(td_client: TdAPI):
+    req = QryInvestorPositionField()
+    td_client.ReqQryInvestorPosition(req)
+    td_client.api.ReqQryInvestorPosition.assert_called_once()
+
+
+def test_should_call_callback_when_OnRspQryInvestorPosition(td_client: TdAPI, spi_callback):
+    # given
+    td_client.set_spi_callback(CtpMethod.OnRspQryInvestorPosition, spi_callback)
+    pInvestorPosition = tdapi.CThostFtdcInvestorPositionField()
+    pRspInfo = tdapi.CThostFtdcRspInfoField()
+    # when
+    td_client.OnRspQryInvestorPosition(pInvestorPosition, pRspInfo, 2, True)
+    # should
+    spi_callback.assert_called_once()
+
+
+def test_should_call_api_ReqQryOrder_when_ReqQryOrder(td_client: TdAPI):
+    req = QryOrderField()
+    td_client.ReqQryOrder(req)
+    td_client.api.ReqQryOrder.assert_called_once()
+
+
+def test_should_call_callback_when_OnRspQryOrder(td_client: TdAPI, spi_callback):
+    # given
+    td_client.set_spi_callback(CtpMethod.OnRspQryOrder, spi_callback)
+    pOrder = tdapi.CThostFtdcOrderField()
+    pRspInfo = tdapi.CThostFtdcRspInfoField()
+    # when
+    td_client.OnRspQryOrder(pOrder, pRspInfo, 2, True)
+    # should
+    spi_callback.assert_called_once()
+
+
+def test_should_call_api_ReqQryTrade_when_ReqQryTrade(td_client: TdAPI):
+    req = QryTradeField()
+    td_client.ReqQryTrade(req)
+    td_client.api.ReqQryTrade.assert_called_once()
+
+
+def test_should_call_callback_when_OnRspQryTrade(td_client: TdAPI, spi_callback):
+    # given
+    td_client.set_spi_callback(CtpMethod.OnRspQryTrade, spi_callback)
+    pTrade = tdapi.CThostFtdcTradeField()
+    pRspInfo = tdapi.CThostFtdcRspInfoField()
+    # when
+    td_client.OnRspQryTrade(pTrade, pRspInfo, 2, True)
+    # should
+    spi_callback.assert_called_once()

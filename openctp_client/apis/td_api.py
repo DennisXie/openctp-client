@@ -175,3 +175,59 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
             RspInfo=RspInfoField.from_ctp_object(pRspInfo),
         )
         self.callback(rsp)
+    
+    def ReqQryTradingAccount(self, qry_trading_account: QryTradingAccountField, req_id: int | None = None) -> int:
+        req = qry_trading_account.ctp_object()
+        req_id = req_id or self.request_id
+        return self._api.ReqQryTradingAccount(req, req_id)
+    
+    def OnRspQryTradingAccount(self, pTradingAccount: tdapi.CThostFtdcTradingAccountField, pRspInfo, nRequestID, bIsLast):
+        rsp = RspQryTradingAccount(
+            RspQryTradingAccount=TradingAccountField.from_ctp_object(pTradingAccount),
+            RspInfo=RspInfoField.from_ctp_object(pRspInfo),
+            RequestID=nRequestID,
+            IsLast=bIsLast
+        )
+        self.callback(rsp)
+    
+    def ReqQryInvestorPosition(self, qry_investor_position: QryInvestorPositionField, req_id: int | None = None) -> int:
+        req = qry_investor_position.ctp_object()
+        req_id = req_id or self.request_id
+        return self._api.ReqQryInvestorPosition(req, req_id)
+    
+    def OnRspQryInvestorPosition(self, pInvestorPosition: tdapi.CThostFtdcInvestorPositionField, pRspInfo, nRequestID, bIsLast):
+        rsp = RspQryInvestorPosition(
+            RspQryInvestorPosition=InvestorPositionField.from_ctp_object(pInvestorPosition),
+            RspInfo=RspInfoField.from_ctp_object(pRspInfo),
+            RequestID=nRequestID,
+            IsLast=bIsLast
+        )
+        self.callback(rsp)
+    
+    def ReqQryOrder(self, qry_order: QryOrderField, req_id: int | None = None) -> int:
+        req = qry_order.ctp_object()
+        req_id = req_id or self.request_id
+        return self._api.ReqQryOrder(req, req_id)
+    
+    def OnRspQryOrder(self, pOrder: tdapi.CThostFtdcOrderField, pRspInfo, nRequestID, bIsLast):
+        rsp = RspQryOrder(
+            RspQryOrder=OrderField.from_ctp_object(pOrder),
+            RspInfo=RspInfoField.from_ctp_object(pRspInfo),
+            RequestID=nRequestID,
+            IsLast=bIsLast
+        )
+        self.callback(rsp)
+    
+    def ReqQryTrade(self, qry_trade: QryTradeField, req_id: int | None = None) -> int:
+        req = qry_trade.ctp_object()
+        req_id = req_id or self.request_id
+        return self._api.ReqQryTrade(req, req_id)
+    
+    def OnRspQryTrade(self, pTrade: tdapi.CThostFtdcTradeField, pRspInfo, nRequestID, bIsLast):
+        rsp = RspQryTrade(
+            RspQryTrade=TradeField.from_ctp_object(pTrade),
+            RspInfo=RspInfoField.from_ctp_object(pRspInfo),
+            RequestID=nRequestID,
+            IsLast=bIsLast
+        )
+        self.callback(rsp)
