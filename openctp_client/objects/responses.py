@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from .enums import CtpMethod
+from .enums import CtpMethod, Api
 from .fields import *
 
 
@@ -25,12 +25,21 @@ class RspAuthenticate(CtpResponse):
 
 class RspUserLogin(CtpResponse):
     method: CtpMethod = CtpMethod.OnRspUserLogin
+    _source: Api
 
     RspUserLogin: Optional[RspUserLoginField] = None
     
     @property
     def args(self) -> list[any]:
         return [self.RspUserLogin, self.RspInfo, self.RequestID, self.IsLast]
+    
+    @property
+    def source(self) -> Api:
+        return self._source
+    
+    @source.setter
+    def source(self, src: Api) -> None:
+        self._source = src
 
 
 class RspSubMarketData(CtpResponse):

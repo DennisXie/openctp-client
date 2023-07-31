@@ -1,14 +1,19 @@
 from enum import Enum, auto
 
 
+class Api(Enum):
+    Td = auto()
+    Md = auto()
+
+
 class CtpMethod(Enum):
     # Used by td and md
     Connect = auto()
     Disconnect = auto()
+    OnRspUserLogin = auto()
     
     # Used by md
     SubscribeMarketData = auto()
-    OnRspUserLogin = auto()
     OnRspSubMarketData = auto()
     OnRtnDepthMarketData = auto()
 

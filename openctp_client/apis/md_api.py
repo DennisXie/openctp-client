@@ -2,7 +2,7 @@ from typing import Any, Callable, Optional, Tuple
 from ..openctp import mdapi
 
 from ..objects.config import CtpConfig
-from ..objects.enums import CtpMethod
+from ..objects.enums import CtpMethod, Api
 from ..objects.fields import *
 from ..objects.responses import *
 
@@ -84,6 +84,7 @@ class MdAPI(mdapi.CThostFtdcMdSpi):
             RequestID=nRequestID,
             IsLast=bIsLast
         )
+        rsp.source = Api.Md
             
         if pRspInfo is not None:
             self.log(f"login rsp info, ErrorID: {pRspInfo.ErrorID}, ErrorMsg: {pRspInfo.ErrorMsg}")

@@ -2,7 +2,7 @@ from typing import Callable, Tuple
 from ..openctp import tdapi
 
 from ..objects.config import CtpConfig
-from ..objects.enums import CtpMethod
+from ..objects.enums import CtpMethod, Api
 from ..objects.fields import *
 from ..objects.responses import *
 
@@ -100,6 +100,7 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
             RequestID=nRequestID,
             IsLast=bIsLast
         )
+        rsp.source = Api.Td
             
         if pRspInfo is not None:
             self.log(f"login rsp info, ErrorID: {pRspInfo.ErrorID}, ErrorMsg: {pRspInfo.ErrorMsg}")
