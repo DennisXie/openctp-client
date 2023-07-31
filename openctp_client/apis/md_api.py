@@ -17,7 +17,7 @@ class MdAPI(mdapi.CThostFtdcMdSpi):
         self._spi_callback: dict[CtpMethod, Callable] = {}
         self._api: mdapi.CThostFtdcMdApi = mdapi.CThostFtdcMdApi.CreateFtdcMdApi(self.config.user_id)
         self._api.RegisterSpi(self)
-        self._api.RegisterFront(self.config.addr)
+        self._api.RegisterFront(self.config.md_addr)
     
     @property
     def api(self) -> mdapi.CThostFtdcMdApi:

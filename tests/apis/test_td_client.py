@@ -6,14 +6,6 @@ from openctp_client.apis.td_api import TdAPI
 from openctp_client.objects import *
 
 
-@pytest.fixture
-def td_client(config: CtpConfig, mocker: MockerFixture):
-    tdapi = mocker.patch("openctp_client.apis.td_api.tdapi")
-    api = mocker.Mock(name="api")
-    tdapi.CThostFtdcTraderApi.CreateFtdcTraderApi.return_value = api
-    return TdAPI(config)
-
-
 def test_should_create_TdClient(config: CtpConfig):
     td_client = TdAPI(config)
     assert td_client is not None

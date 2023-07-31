@@ -1,18 +1,9 @@
 import pytest
-from pytest_mock import MockerFixture
 
 from openctp_client.openctp import mdapi
 from openctp_client.apis.md_api import MdAPI
 from openctp_client.objects import *
 from openctp_client.objects import CtpConfig
-
-
-@pytest.fixture
-def md_client(config: CtpConfig, mocker: MockerFixture):
-    mdapi = mocker.patch("openctp_client.apis.md_api.mdapi")
-    api = mocker.Mock(name="api")
-    mdapi.CThostFtdcMdApi.CreateFtdcMdApi.return_value = api
-    return MdAPI(config)
 
 
 def test_should_get_spi_callback_when_set_spi_callback_to_md_client(config: CtpConfig, spi_callback):

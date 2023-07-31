@@ -17,7 +17,7 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
         self._spi_callback: dict[CtpMethod, Callable] = {}
         self._api: tdapi.CThostFtdcTraderApi = tdapi.CThostFtdcTraderApi.CreateFtdcTraderApi(self.config.user_id)
         self._api.RegisterSpi(self)
-        self._api.RegisterFront(self.config.addr)
+        self._api.RegisterFront(self.config.td_addr)
     
     @property
     def request_id(self) -> int:
