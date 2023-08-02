@@ -35,7 +35,6 @@ class ReqUserLoginField(CtpField):
     ProtocolInfo: Optional[constr(max_length=11)] = Field(None, description='协议信息')
     MacAddress: Optional[constr(max_length=21)] = Field(None, description='Mac地址')
     OneTimePassword: Optional[constr(max_length=41)] = Field(None, description='动态密码')
-    reserve1: Optional[constr(max_length=16)] = Field(None, description='保留的无效字段')
     LoginRemark: Optional[constr(max_length=36)] = Field(None, description='登录备注')
     ClientIPPort: Optional[int] = Field(None, description='终端IP端口')
     ClientIPAddress: Optional[constr(max_length=33)] = Field(None, description='终端IP地址')
@@ -103,7 +102,6 @@ class AuthenticationInfoField(CtpField):
     IsResult: Optional[int] = Field(None, description='是否为认证结果')
     AppID: Optional[constr(max_length=33)] = Field(None, description='App代码')
     AppType: Optional[constr(max_length=1)] = Field(None, description='App类型')
-    reserve1: Optional[constr(max_length=16)] = Field(None, description='保留的无效字段')
     ClientIPAddress: Optional[constr(max_length=33)] = Field(None, description='终端IP地址')
 
 
@@ -112,6 +110,14 @@ class RspInfoField(CtpField):
     
     ErrorID: Optional[int] = Field(default=0, description='错误代码')
     ErrorMsg: Optional[constr(max_length=81)] = Field(default="", description='错误信息')
+    
+    @classmethod
+    def from_ctp_object(cls: CtpField, obj: any) -> CtpField:
+        return cls.model_validate(obj) if obj else cls()
+    
+    @property
+    def ok(self) -> bool:
+        return self.ErrorID == 0
     
 class ExchangeField(CtpField):
     _ctp_type_ = tdapi.CThostFtdcExchangeField
@@ -124,7 +130,6 @@ class ExchangeField(CtpField):
 class ProductField(CtpField):
     _ctp_type_ = tdapi.CThostFtdcProductField
     
-    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     ProductName: Optional[constr(max_length=21)] = Field(None, description='产品名称')
     ExchangeID: Optional[constr(max_length=9)] = Field(None, description='交易所代码')
     ProductClass: Optional[constr(max_length=1)] = Field(None, description='产品类型')
@@ -141,7 +146,6 @@ class ProductField(CtpField):
     MortgageFundUseRange: Optional[constr(max_length=1)] = Field(
         None, description='质押资金可用范围'
     )
-    reserve2: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     UnderlyingMultiple: Optional[float] = Field(None, description='合约基础商品乘数')
     ProductID: Optional[constr(max_length=81)] = Field(None, description='产品代码')
     ExchangeProductID: Optional[constr(max_length=81)] = Field(
@@ -158,10 +162,7 @@ class ProductField(CtpField):
 class QryInstrumentField(CtpField):
     _ctp_type_ = tdapi.CThostFtdcQryInstrumentField
     
-    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     ExchangeID: Optional[constr(max_length=9)] = Field(None, description='交易所代码')
-    reserve2: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
-    reserve3: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     InstrumentID: Optional[constr(max_length=81)] = Field(None, description='合约代码')
     ExchangeInstID: Optional[constr(max_length=81)] = Field(
         None, description='合约在交易所的代码'
@@ -172,11 +173,8 @@ class QryInstrumentField(CtpField):
 class InstrumentField(CtpField):
     _ctp_type_ = tdapi.CThostFtdcInstrumentField
     
-    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     ExchangeID: Optional[constr(max_length=9)] = Field(None, description='交易所代码')
     InstrumentName: Optional[constr(max_length=21)] = Field(None, description='合约名称')
-    reserve2: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
-    reserve3: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     ProductClass: Optional[constr(max_length=1)] = Field(None, description='产品类型')
     DeliveryYear: Optional[int] = Field(None, description='交割年份')
     DeliveryMonth: Optional[int] = Field(None, description='交割月')
@@ -200,7 +198,6 @@ class InstrumentField(CtpField):
     MaxMarginSideAlgorithm: Optional[constr(max_length=1)] = Field(
         None, description='是否使用大额单边保证金算法'
     )
-    reserve4: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     StrikePrice: Optional[float] = Field(None, description='执行价')
     OptionsType: Optional[constr(max_length=1)] = Field(None, description='期权类型')
     UnderlyingMultiple: Optional[float] = Field(None, description='合约基础商品乘数')
@@ -218,7 +215,6 @@ class InstrumentField(CtpField):
 class SpecificInstrumentField(CtpField):
     _ctp_type_ = tdapi.CThostFtdcSpecificInstrumentField
     
-    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     InstrumentID: Optional[constr(max_length=81)] = Field(None, description='合约代码')
     
     
@@ -226,9 +222,7 @@ class DepthMarketDataField(CtpField):
     _ctp_type_ = tdapi.CThostFtdcDepthMarketDataField
     
     TradingDay: Optional[constr(max_length=9)] = Field(None, description='交易日')
-    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     ExchangeID: Optional[constr(max_length=9)] = Field(None, description='交易所代码')
-    reserve2: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     LastPrice: Optional[float] = Field(None, description='最新价')
     PreSettlementPrice: Optional[float] = Field(None, description='上次结算价')
     PreClosePrice: Optional[float] = Field(None, description='昨收盘')
@@ -282,7 +276,6 @@ class InputOrderField(CtpField):
     
     BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
     InvestorID: Optional[constr(max_length=13)] = Field(None, description='投资者代码')
-    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     OrderRef: Optional[constr(max_length=13)] = Field(None, description='报单引用')
     UserID: Optional[constr(max_length=16)] = Field(None, description='用户代码')
     OrderPriceType: Optional[constr(max_length=1)] = Field(None, description='报单价格条件')
@@ -310,7 +303,6 @@ class InputOrderField(CtpField):
     AccountID: Optional[constr(max_length=13)] = Field(None, description='资金账号')
     CurrencyID: Optional[constr(max_length=4)] = Field(None, description='币种代码')
     ClientID: Optional[constr(max_length=11)] = Field(None, description='交易编码')
-    reserve2: Optional[constr(max_length=16)] = Field(None, description='保留的无效字段')
     MacAddress: Optional[constr(max_length=21)] = Field(None, description='Mac地址')
     InstrumentID: Optional[constr(max_length=81)] = Field(None, description='合约代码')
     IPAddress: Optional[constr(max_length=33)] = Field(None, description='IP地址')
@@ -321,7 +313,6 @@ class OrderField(CtpField):
     
     BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
     InvestorID: Optional[constr(max_length=13)] = Field(None, description='投资者代码')
-    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     OrderRef: Optional[constr(max_length=13)] = Field(None, description='报单引用')
     UserID: Optional[constr(max_length=16)] = Field(None, description='用户代码')
     OrderPriceType: Optional[constr(max_length=1)] = Field(None, description='报单价格条件')
@@ -346,7 +337,6 @@ class OrderField(CtpField):
     ExchangeID: Optional[constr(max_length=9)] = Field(None, description='交易所代码')
     ParticipantID: Optional[constr(max_length=11)] = Field(None, description='会员代码')
     ClientID: Optional[constr(max_length=11)] = Field(None, description='客户代码')
-    reserve2: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     TraderID: Optional[constr(max_length=21)] = Field(None, description='交易所交易员代码')
     InstallID: Optional[int] = Field(None, description='安装编号')
     OrderSubmitStatus: Optional[constr(max_length=1)] = Field(
@@ -390,7 +380,6 @@ class OrderField(CtpField):
     InvestUnitID: Optional[constr(max_length=17)] = Field(None, description='投资单元代码')
     AccountID: Optional[constr(max_length=13)] = Field(None, description='资金账号')
     CurrencyID: Optional[constr(max_length=4)] = Field(None, description='币种代码')
-    reserve3: Optional[constr(max_length=16)] = Field(None, description='保留的无效字段')
     MacAddress: Optional[constr(max_length=21)] = Field(None, description='Mac地址')
     InstrumentID: Optional[constr(max_length=81)] = Field(None, description='合约代码')
     ExchangeInstID: Optional[constr(max_length=81)] = Field(
@@ -404,7 +393,6 @@ class TradeField(CtpField):
     
     BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
     InvestorID: Optional[constr(max_length=13)] = Field(None, description='投资者代码')
-    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     OrderRef: Optional[constr(max_length=13)] = Field(None, description='报单引用')
     UserID: Optional[constr(max_length=16)] = Field(None, description='用户代码')
     ExchangeID: Optional[constr(max_length=9)] = Field(None, description='交易所代码')
@@ -414,7 +402,6 @@ class TradeField(CtpField):
     ParticipantID: Optional[constr(max_length=11)] = Field(None, description='会员代码')
     ClientID: Optional[constr(max_length=11)] = Field(None, description='客户代码')
     TradingRole: Optional[constr(max_length=1)] = Field(None, description='交易角色')
-    reserve2: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     OffsetFlag: Optional[constr(max_length=1)] = Field(None, description='开平标志')
     HedgeFlag: Optional[constr(max_length=1)] = Field(None, description='投机套保标志')
     Price: Optional[float] = Field(None, description='价格')
@@ -455,9 +442,7 @@ class InputOrderActionField(CtpField):
     LimitPrice: Optional[float] = Field(None, description='价格')
     VolumeChange: Optional[int] = Field(None, description='数量变化')
     UserID: Optional[constr(max_length=16)] = Field(None, description='用户代码')
-    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     InvestUnitID: Optional[constr(max_length=17)] = Field(None, description='投资单元代码')
-    reserve2: Optional[constr(max_length=16)] = Field(None, description='保留的无效字段')
     MacAddress: Optional[constr(max_length=21)] = Field(None, description='Mac地址')
     InstrumentID: Optional[constr(max_length=81)] = Field(None, description='合约代码')
     IPAddress: Optional[constr(max_length=33)] = Field(None, description='IP地址')
@@ -492,10 +477,8 @@ class OrderActionField(CtpField):
     )
     UserID: Optional[constr(max_length=16)] = Field(None, description='用户代码')
     StatusMsg: Optional[constr(max_length=81)] = Field(None, description='状态信息')
-    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     BranchID: Optional[constr(max_length=9)] = Field(None, description='营业部编号')
     InvestUnitID: Optional[constr(max_length=17)] = Field(None, description='投资单元代码')
-    reserve2: Optional[constr(max_length=16)] = Field(None, description='保留的无效字段')
     MacAddress: Optional[constr(max_length=21)] = Field(None, description='Mac地址')
     InstrumentID: Optional[constr(max_length=81)] = Field(None, description='合约代码')
     IPAddress: Optional[constr(max_length=33)] = Field(None, description='IP地址')
@@ -506,7 +489,6 @@ class QryOrderField(CtpField):
     
     BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
     InvestorID: Optional[constr(max_length=13)] = Field(None, description='投资者代码')
-    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     ExchangeID: Optional[constr(max_length=9)] = Field(None, description='交易所代码')
     OrderSysID: Optional[constr(max_length=21)] = Field(None, description='报单编号')
     InsertTimeStart: Optional[constr(max_length=9)] = Field(None, description='开始时间')
@@ -520,7 +502,6 @@ class QryTradeField(CtpField):
     
     BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
     InvestorID: Optional[constr(max_length=13)] = Field(None, description='投资者代码')
-    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     ExchangeID: Optional[constr(max_length=9)] = Field(None, description='交易所代码')
     TradeID: Optional[constr(max_length=21)] = Field(None, description='成交编号')
     TradeTimeStart: Optional[constr(max_length=9)] = Field(None, description='开始时间')
@@ -534,7 +515,6 @@ class QryInvestorPositionField(CtpField):
     
     BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
     InvestorID: Optional[constr(max_length=13)] = Field(None, description='投资者代码')
-    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     ExchangeID: Optional[constr(max_length=9)] = Field(None, description='交易所代码')
     InvestUnitID: Optional[constr(max_length=17)] = Field(None, description='投资单元代码')
     InstrumentID: Optional[constr(max_length=81)] = Field(None, description='合约代码')
@@ -616,7 +596,6 @@ class TradingAccountField(CtpField):
 class InvestorPositionField(CtpField):
     _ctp_type_ = tdapi.CThostFtdcInvestorPositionField
     
-    reserve1: Optional[constr(max_length=31)] = Field(None, description='保留的无效字段')
     BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
     InvestorID: Optional[constr(max_length=13)] = Field(None, description='投资者代码')
     PosiDirection: Optional[constr(max_length=1)] = Field(None, description='持仓多空方向')

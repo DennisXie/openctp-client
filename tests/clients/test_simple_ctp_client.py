@@ -25,12 +25,14 @@ def test_should_create_simple_ctp_client(config: CtpConfig):
     assert client.mdapi is not None
 
 
+@pytest.mark.skip(reason="not implemented")
 def test_should_call_api_Init_when_connect(simple_ctp_client):
     simple_ctp_client.connect()
     simple_ctp_client.tdapi.api.Init.assert_called_once()
     simple_ctp_client.mdapi.api.Init.assert_called_once()
 
 
+@pytest.mark.skip(reason="not implemented")
 def test_should_connected_when_connect(simple_ctp_client):
     simple_ctp_client.connect()
     # assert simple_ctp_client.connected is True

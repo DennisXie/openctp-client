@@ -13,6 +13,10 @@ class CtpResponse(BaseModel):
     @property
     def args(self) -> list[any]:
         return []
+    
+    @property
+    def ok(self) -> bool:
+        return self.RspInfo.ok
 
 
 class RspAuthenticate(CtpResponse):
