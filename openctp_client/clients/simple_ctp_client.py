@@ -4,13 +4,14 @@ from enum import Enum, auto
 from typing import Optional, Callable
 
 from ..apis import MdAPI, TdAPI
+from ..exceptions import CtpException
 from ..objects import CtpConfig
 from ..objects.enums import CtpMethod
 from ..objects.responses import *
 
 
 class SimpleCtpClientEvent(Enum):
-    on_login = auto()
+    on_connected = auto()
     on_order = auto()
     on_trade = auto()
     on_instrument = auto()
@@ -38,7 +39,7 @@ class SimpleCtpClient(object):
         self._connect_error: RspInfoField = None
         self._queue: queue.Queue = queue.Queue()
         self._event_callback: dict[SimpleCtpClientEvent, list[Callable]] = {
-            SimpleCtpClientEvent.on_login: [],
+            SimpleCtpClientEvent.on_connected: [],
             SimpleCtpClientEvent.on_order: [],
             SimpleCtpClientEvent.on_trade: [],
             SimpleCtpClientEvent.on_instrument: [],
@@ -46,11 +47,14 @@ class SimpleCtpClient(object):
             SimpleCtpClientEvent.on_position: [],
             SimpleCtpClientEvent.on_tick: [],
         }
-        self._callback: dict[CtpMethod, Callable] = {}
+        self._callback: dict[CtpMethod, Callable] = {
+            CtpMethod.OnRspUserLogin: self._login,
+            CtpMethod.OnRspAuthenticate: self._authenticate,
+        }
     
     @property
     def connected(self) -> bool:
-        return self._td_connected and self._md_connected
+        return self._connected
     
     @property
     def tdapi(self) -> TdAPI:
@@ -86,10 +90,12 @@ class SimpleCtpClient(object):
         self._connected_event.wait()
         self._connected_event.clear()
         if not self._connected and self._connect_error:
-            raise Exception(self._connect_error)
+            raise CtpException(self._connect_error.ErrorID, self._connect_error.ErrorMsg)
    
     def _produce_rsp(self, rsp: CtpResponse) -> None:
-        self._queue.put(rsp)
+        # self._queue.put(rsp)
+        # TODO: use another thread to deal with the rsp
+        self._process_rsp(rsp)
     
     def _consume_rsp(self) -> None:
         while True:
@@ -102,21 +108,33 @@ class SimpleCtpClient(object):
     def _process_rsp(self, rsp: CtpResponse) -> None:
         if rsp.method in self._callback:
             self._callback[rsp.method](rsp)
+        else:
+            pass
     
     def _authenticate(self, rsp: RspAuthenticate) -> None:
-        pass
+        self.log(f"Td authenticate failed.")
+        self._login_failed(rsp.RspInfo, Api.Td)
     
     def _login(self, rsp: RspUserLogin) -> None:
+        self.log(f"Login to {rsp.source.name}.")
         if rsp.ok:
-            with self._connected_lock:
-                self._connected = True
-            self.log(f"Connect to {rsp.source} success.")
+            self._login_success(rsp.RspUserLogin, rsp.source)
         else:
-            self._login_failed(rsp.rsp_info)
-        self._connected_event.set()
+            self._login_failed(rsp.RspInfo, rsp.source)
     
-    def _login_failed(self, rsp_info: RspInfoField) -> None:
-        self._connect_error = rsp_info
+    def _login_success(self, login_field: RspUserLoginField, source: Api) -> None:
+        self.log(f"Connect to {source.name} success.")
+        with self._connected_lock:
+            self._connected = True
+        self._connected_event.set()
+       
+    
+    def _login_failed(self, rsp_info: RspInfoField, source: Api) -> None:
+        self.log(f"Connect to {source.name} failed.")
+        with self._connected_lock:
+            self._connected = False
+            self._connect_error = rsp_info
+        self._connected_event.set()
     
     def _on_tick(self) -> None:
         pass

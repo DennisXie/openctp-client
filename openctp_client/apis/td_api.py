@@ -67,6 +67,7 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
         self.api.Join()
     
     def OnFrontConnected(self) -> None:
+        print("on front connected")
         req = tdapi.CThostFtdcReqAuthenticateField()
         req.BrokerID = self.config.broker_id
         req.UserID = self.config.user_id
