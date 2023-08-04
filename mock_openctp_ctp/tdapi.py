@@ -8,6 +8,7 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, Field, constr
 
+THOST_TERT_QUICK = 0
 
 class CThostFtdcTraderSpi(object):
     pass
@@ -24,7 +25,13 @@ class CThostFtdcTraderApi(object):
     
     def RegisterFront(self, *args, **kwargs):
         pass
-
+    
+    def SubscribePrivateTopic(self, *args, **kwargs):
+        pass
+    
+    def SubscribePublicTopic(self, *args, **kwargs):
+        pass
+    
 
 class CThostFtdcDisseminationField(BaseModel):
     SequenceSeries: Optional[int] = Field(None, description='序列系列号')
