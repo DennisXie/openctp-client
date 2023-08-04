@@ -82,7 +82,7 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
             self._login()
         else:
             self.log(f"on rsp authenticate {pRspInfo.ErrorID}, {pRspInfo.ErrorMsg}")
-            self._authenticate_failed(pRspInfo, nRequestID, bIsLast)
+            self._authenticate_failed(pRspAuthenticateField, pRspInfo, nRequestID, bIsLast)
     
     def _login(self) -> None:
         req = tdapi.CThostFtdcReqUserLoginField()
@@ -91,8 +91,9 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
         req.Password = self.config.password
         self._api.ReqUserLogin(req, self.request_id)
     
-    def _authenticate_failed(self, pRspInfo, nRequestID, bIsLast) -> None:
+    def _authenticate_failed(self, pRspAuthenticateField, pRspInfo, nRequestID, bIsLast) -> None:
         rsp = RspAuthenticate(
+            RspAuthenticate=RspAuthenticateField.from_ctp_object(pRspAuthenticateField),
             RspInfo=RspInfoField.from_ctp_object(pRspInfo),
             RequestID=nRequestID,
             IsLast=bIsLast

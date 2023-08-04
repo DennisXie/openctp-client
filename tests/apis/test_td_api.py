@@ -74,6 +74,7 @@ def test_should_call_callback_when_OnRspAuthenticate_fail(td_client: TdAPI, spi_
     # given
     td_client.set_spi_callback(CtpMethod.OnRspAuthenticate, spi_callback)
     authenticate = tdapi.CThostFtdcRspAuthenticateField()
+    authenticate.AppID = "1111"
     rsp_info = tdapi.CThostFtdcRspInfoField()
     rsp_info.ErrorID = 1
     rsp_info.ErrorMsg = ""
@@ -82,7 +83,9 @@ def test_should_call_callback_when_OnRspAuthenticate_fail(td_client: TdAPI, spi_
     td_client.OnRspAuthenticate(authenticate, rsp_info, 1, True)
     
     # then
-    spi_callback.assert_called_once()
+    authenticate_field = RspAuthenticateField.from_ctp_object(authenticate)
+    rsp_info_field = RspInfoField.from_ctp_object(rsp_info)
+    spi_callback.assert_called_once_with(authenticate_field, rsp_info_field, 1, True)
 
 
 def test_should_call_callback_when_OnRspUserLogin(td_client: TdAPI, spi_callback):
@@ -157,11 +160,14 @@ def test_should_call_callback_when_OnRspOrderInsert(td_client: TdAPI, spi_callba
     # given
     td_client.set_spi_callback(CtpMethod.OnRspOrderInsert, spi_callback)
     pInputOrder = tdapi.CThostFtdcInputOrderField()
+    pInputOrder.AccountID = "123"
     pRspInfo = tdapi.CThostFtdcRspInfoField()
     # when
     td_client.OnRspOrderInsert(pInputOrder, pRspInfo, 2, True)
     # should
-    spi_callback.assert_called_once()
+    input_order = InputOrderField.from_ctp_object(pInputOrder)
+    rsp_info = RspInfoField.from_ctp_object(pRspInfo)
+    spi_callback.assert_called_once_with(input_order, rsp_info, 2, True)
 
 
 def test_should_call_callback_when_OnErrRtnOrderInsert(td_client: TdAPI, spi_callback):

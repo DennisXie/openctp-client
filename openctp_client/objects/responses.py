@@ -23,9 +23,11 @@ class CtpResponse(BaseModel):
 class RspAuthenticate(CtpResponse):
     method: CtpMethod = CtpMethod.OnRspAuthenticate
     
+    RspAuthenticate: Optional[RspAuthenticateField] = None
+    
     @property
     def args(self) -> list[Any]:
-        return [self.RspInfo, self.RequestID, self.IsLast]
+        return [self.RspAuthenticate, self.RspInfo, self.RequestID, self.IsLast]
 
 
 class RspUserLogin(CtpResponse):
