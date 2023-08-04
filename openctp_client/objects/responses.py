@@ -1,3 +1,4 @@
+from typing import Any
 from pydantic import BaseModel, Field
 from .enums import CtpMethod, Api
 from .fields import *
@@ -11,7 +12,7 @@ class CtpResponse(BaseModel):
     IsLast: Optional[bool] = True
     
     @property
-    def args(self) -> list[any]:
+    def args(self) -> list[Any]:
         return []
     
     @property
@@ -23,7 +24,7 @@ class RspAuthenticate(CtpResponse):
     method: CtpMethod = CtpMethod.OnRspAuthenticate
     
     @property
-    def args(self) -> list[any]:
+    def args(self) -> list[Any]:
         return [self.RspInfo, self.RequestID, self.IsLast]
 
 
@@ -34,7 +35,7 @@ class RspUserLogin(CtpResponse):
     RspUserLogin: Optional[RspUserLoginField] = None
     
     @property
-    def args(self) -> list[any]:
+    def args(self) -> list[Any]:
         return [self.RspUserLogin, self.RspInfo, self.RequestID, self.IsLast]
     
     @property
@@ -52,7 +53,7 @@ class RspSubMarketData(CtpResponse):
     SpecificInstrument: Optional[SpecificInstrumentField] = None
     
     @property
-    def args(self) -> list[any]:
+    def args(self) -> list[Any]:
         return [self.SpecificInstrument, self.RspInfo, self.RequestID, self.IsLast]
 
 
@@ -62,8 +63,28 @@ class RtnDepthMarketData(CtpResponse):
     DepthMarketData: Optional[DepthMarketDataField]
     
     @property
-    def args(self) -> list[any]:
+    def args(self) -> list[Any]:
         return [self.DepthMarketData]
+
+
+class RspQrySettlementInfo(CtpResponse):
+    method: CtpMethod = CtpMethod.OnRspQrySettlementInfo
+    
+    SettlementInfo: Optional[SettlementInfoField] = None
+    
+    @property
+    def args(self) -> list[Any]:
+        return [self.SettlementInfo, self.RspInfo, self.RequestID, self.IsLast]
+
+
+class RspQrySettlementInfoConfirm(CtpResponse):
+    method: CtpMethod = CtpMethod.OnRspQrySettlementInfoConfirm
+    
+    SettlementInfoConfirm: Optional[SettlementInfoConfirmField] = None
+    
+    @property
+    def args(self) -> list[Any]:
+        return [self.SettlementInfoConfirm, self.RspInfo, self.RequestID, self.IsLast]
 
 
 class RspQryInstrument(CtpResponse):
@@ -72,7 +93,7 @@ class RspQryInstrument(CtpResponse):
     Instrument: Optional[InstrumentField] = None
     
     @property
-    def args(self) -> list[any]:
+    def args(self) -> list[Any]:
         return [self.Instrument, self.RspInfo, self.RequestID, self.IsLast]
 
 
@@ -82,7 +103,7 @@ class RspOrderInsert(CtpResponse):
     InputOrder: Optional[InputOrderField] = None
     
     @property
-    def args(self) -> list[any]:
+    def args(self) -> list[Any]:
         return [self.InputOrder, self.RspInfo, self.RequestID, self.IsLast]
 
 
@@ -90,7 +111,7 @@ class ErrRtnOrderInsert(RspOrderInsert):
     method: CtpMethod = CtpMethod.OnErrRtnOrderInsert
     
     @property
-    def args(self) -> list[any]:
+    def args(self) -> list[Any]:
         return [self.InputOrder, self.RspInfo]
 
 
@@ -100,7 +121,7 @@ class RtnOrder(CtpResponse):
     Order: Optional[OrderField] = None
     
     @property
-    def args(self) -> list[any]:
+    def args(self) -> list[Any]:
         return [self.Order]
 
 
@@ -110,7 +131,7 @@ class RtnTrade(CtpResponse):
     Trade: Optional[TradeField] = None
     
     @property
-    def args(self) -> list[any]:
+    def args(self) -> list[Any]:
         return [self.Trade]
 
 
@@ -120,7 +141,7 @@ class RspOrderAction(CtpResponse):
     InputOrderAction: Optional[InputOrderActionField] = None
     
     @property
-    def args(self) -> list[any]:
+    def args(self) -> list[Any]:
         return [self.InputOrderAction, self.RspInfo, self.RequestID, self.IsLast]
 
 
@@ -130,7 +151,7 @@ class ErrRtnOrderAction(CtpResponse):
     OrderAction: Optional[OrderActionField] = None
     
     @property
-    def args(self) -> list[any]:
+    def args(self) -> list[Any]:
         return [self.OrderAction, self.RspInfo]
 
 
@@ -140,7 +161,7 @@ class RspQryInvestorPosition(CtpResponse):
     InvestorPosition: Optional[InvestorPositionField] = None
     
     @property
-    def args(self) -> list[any]:
+    def args(self) -> list[Any]:
         return [self.InvestorPosition, self.RspInfo, self.RequestID, self.IsLast]
 
 
@@ -150,7 +171,7 @@ class RspQryTradingAccount(CtpResponse):
     TradingAccount: Optional[TradingAccountField] = None
     
     @property
-    def args(self) -> list[any]:
+    def args(self) -> list[Any]:
         return [self.TradingAccount, self.RspInfo, self.RequestID, self.IsLast]
 
 
@@ -160,7 +181,7 @@ class RspQryTrade(CtpResponse):
     Trade: Optional[TradeField] = None
     
     @property
-    def args(self) -> list[any]:
+    def args(self) -> list[Any]:
         return [self.Trade, self.RspInfo, self.RequestID, self.IsLast]
 
 
@@ -170,5 +191,5 @@ class RspQryOrder(CtpResponse):
     Order: Optional[OrderField] = None
     
     @property
-    def args(self) -> list[any]:
+    def args(self) -> list[Any]:
         return [self.Order, self.RspInfo, self.RequestID, self.IsLast]

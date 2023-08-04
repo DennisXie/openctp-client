@@ -6,14 +6,14 @@ from openctp_client.objects import *
 from openctp_client.objects import CtpConfig
 
 
-def test_should_get_spi_callback_when_set_spi_callback_to_md_client(config: CtpConfig, spi_callback):
+def test_should_get_spi_callback_when_set_spi_callback_to_md_api(config: CtpConfig, spi_callback):
     client = MdAPI(config)
     client.set_spi_callback(CtpMethod.OnRspOrderInsert, spi_callback)
     callback = client.get_spi_callback(CtpMethod.OnRspOrderInsert)
     assert callback == spi_callback
 
 
-def test_should_get_none_when_del_spi_callback_from_md_client(config: CtpConfig, spi_callback):
+def test_should_get_none_when_del_spi_callback_from_md_api(config: CtpConfig, spi_callback):
     client = MdAPI(config)
     client.set_spi_callback(CtpMethod.OnRspOrderInsert, spi_callback)
     client.del_spi_callback(CtpMethod.OnRspOrderInsert)

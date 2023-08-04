@@ -118,6 +118,52 @@ class RspInfoField(CtpField):
     @property
     def ok(self) -> bool:
         return self.ErrorID == 0
+
+
+class QrySettlementInfoField(CtpField):
+    _ctp_type_ = tdapi.CThostFtdcQrySettlementInfoField
+    
+    BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
+    InvestorID: Optional[constr(max_length=13)] = Field(None, description='投资者代码')
+    TradingDay: Optional[constr(max_length=9)] = Field(None, description='交易日')
+    AccountID: Optional[constr(max_length=13)] = Field(None, description='投资者帐号')
+    CurrencyID: Optional[constr(max_length=4)] = Field(None, description='币种代码')
+
+
+class SettlementInfoField(CtpField):
+    _ctp_type_ = tdapi.CThostFtdcSettlementInfoField
+    
+    TradingDay: Optional[constr(max_length=9)] = Field(None, description='交易日')
+    SettlementID: Optional[int] = Field(None, description='结算编号')
+    BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
+    InvestorID: Optional[constr(max_length=13)] = Field(None, description='投资者代码')
+    SequenceNo: Optional[int] = Field(None, description='序号')
+    Content: Optional[constr(max_length=501)] = Field(None, description='消息正文')
+    AccountID: Optional[constr(max_length=13)] = Field(None, description='投资者帐号')
+    CurrencyID: Optional[constr(max_length=4)] = Field(None, description='币种代码')
+
+
+class QrySettlementInfoConfirmField(CtpField):
+    _ctp_type_ = tdapi.CThostFtdcQrySettlementInfoConfirmField
+    
+    BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
+    InvestorID: Optional[constr(max_length=13)] = Field(None, description='投资者代码')
+    AccountID: Optional[constr(max_length=13)] = Field(None, description='投资者帐号')
+    CurrencyID: Optional[constr(max_length=4)] = Field(None, description='币种代码')
+
+   
+class SettlementInfoConfirmField(CtpField):
+    _ctp_type_ = tdapi.CThostFtdcSettlementInfoConfirmField
+    
+    BrokerID: Optional[constr(max_length=11)] = Field(None, description='经纪公司代码')
+    InvestorID: Optional[constr(max_length=13)] = Field(None, description='投资者代码')
+    ConfirmDate: Optional[constr(max_length=9)] = Field(None, description='确认日期')
+    ConfirmTime: Optional[constr(max_length=9)] = Field(None, description='确认时间')
+    SettlementID: Optional[int] = Field(None, description='结算编号')
+    AccountID: Optional[constr(max_length=13)] = Field(None, description='投资者帐号')
+    CurrencyID: Optional[constr(max_length=4)] = Field(None, description='币种代码')
+
+
     
 class ExchangeField(CtpField):
     _ctp_type_ = tdapi.CThostFtdcExchangeField

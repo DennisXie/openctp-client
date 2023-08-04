@@ -19,8 +19,10 @@ class CtpMethod(Enum):
 
     # Used by td
     OnRspAuthenticate = auto()
-    ReqSettlementInfoConfirm = auto()
-    OnRspSettlementInfoConfirm = auto()
+    ReqQrySettlementInfo = auto()
+    OnRspQrySettlementInfo = auto()
+    ReqQrySettlementInfoConfirm = auto()
+    OnRspQrySettlementInfoConfirm = auto()
     ReqQryInstrument = auto()
     OnRspQryInstrument = auto()
     ReqOrderInsert = auto()

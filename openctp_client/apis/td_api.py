@@ -111,6 +111,34 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
             
         self.callback(rsp)
     
+    def ReqQrySettlementInfo(self, qry_settlement_info: QrySettlementInfoField, req_id: int | None = None) -> int:
+        req = qry_settlement_info.ctp_object()
+        req_id = req_id or self.request_id
+        return self._api.ReqQrySettlementInfo(req, req_id)
+    
+    def OnRspQrySettlementInfo(self, pSettlementInfo: tdapi.CThostFtdcSettlementInfoField, pRspInfo, nRequestID, bIsLast):
+        rsp = RspQrySettlementInfo(
+            RspSettlementInfo=SettlementInfoField.from_ctp_object(pSettlementInfo),
+            RspInfo=RspInfoField.from_ctp_object(pRspInfo),
+            RequestID=nRequestID,
+            IsLast=bIsLast
+        )
+        self.callback(rsp)
+    
+    def ReqQrySettlementInfoConfirm(self, qry_settlement_info_confirm: QrySettlementInfoConfirmField, req_id: int | None = None) -> int:
+        req = qry_settlement_info_confirm.ctp_object()
+        req_id = req_id or self.request_id
+        return self._api.ReqQrySettlementInfoConfirm(req, req_id)
+    
+    def OnRspQrySettlementInfoConfirm(self, pSettlementInfoConfirm: tdapi.CThostFtdcSettlementInfoConfirmField, pRspInfo, nRequestID, bIsLast):
+        rsp = RspQrySettlementInfoConfirm(
+            RspSettlementInfoConfirm=SettlementInfoConfirmField.from_ctp_object(pSettlementInfoConfirm),
+            RspInfo=RspInfoField.from_ctp_object(pRspInfo),
+            RequestID=nRequestID,
+            IsLast=bIsLast
+        )
+        self.callback(rsp)
+    
     def ReqQryInstrument(self, qry_instrument: QryInstrumentField, req_id: int | None = None) -> int:
         # TODO: use exception to throw the api error, and return the request_id
         req = qry_instrument.ctp_object()

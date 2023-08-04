@@ -23,7 +23,7 @@ def test_should_set_callback(td_client: TdAPI, spi_callback):
     assert td_client.callback is spi_callback
 
 
-def test_should_get_spi_callback_when_set_spi_callback_to_td_client(config: CtpConfig, spi_callback):
+def test_should_get_spi_callback_when_set_spi_callback_to_td_api(config: CtpConfig, spi_callback):
     td_client = TdAPI(config)
     td_client.set_spi_callback(CtpMethod.OnRspOrderInsert, spi_callback)
     callback = td_client.get_spi_callback(CtpMethod.OnRspOrderInsert)
@@ -37,7 +37,7 @@ def test_should_get_none_when_spi_callback_not_set(config: CtpConfig, spi_callba
     assert callback is None
 
 
-def test_should_get_none_when_del_spi_callback_from_md_client(config: CtpConfig, spi_callback):
+def test_should_get_none_when_del_spi_callback_from_td_api(config: CtpConfig, spi_callback):
     td_client = TdAPI(config)
     td_client.set_spi_callback(CtpMethod.OnRspOrderInsert, spi_callback)
     deleted_callback = td_client.del_spi_callback(CtpMethod.OnRspOrderInsert)
@@ -92,6 +92,40 @@ def test_should_call_callback_when_OnRspUserLogin(td_client: TdAPI, spi_callback
     pRspInfo = tdapi.CThostFtdcRspInfoField()
     # when
     td_client.OnRspUserLogin(pRspUserLogin, pRspInfo, 2, True)
+    # should
+    spi_callback.assert_called_once()
+
+
+def test_should_call_api_ReqQrySettlementInfo_when_ReqQrySettlementInfo(td_client: TdAPI):
+    req = QrySettlementInfoField()
+    td_client.ReqQrySettlementInfo(req)
+    td_client.api.ReqQrySettlementInfo.assert_called_once()
+
+
+def test_should_call_callback_when_OnRspQrySettlementInfo(td_client: TdAPI, spi_callback):
+    # given
+    td_client.set_spi_callback(CtpMethod.OnRspQrySettlementInfo, spi_callback)
+    pSettlementInfo = tdapi.CThostFtdcSettlementInfoField()
+    pRspInfo = tdapi.CThostFtdcRspInfoField()
+    # when
+    td_client.OnRspQrySettlementInfo(pSettlementInfo, pRspInfo, 2, True)
+    # should
+    spi_callback.assert_called_once()
+
+
+def test_should_call_api_ReqQrySettlementInfoConfirm_when_ReqQrySettlementInfoConfirm(td_client: TdAPI):
+    req = SettlementInfoConfirmField()
+    td_client.ReqQrySettlementInfoConfirm(req)
+    td_client.api.ReqQrySettlementInfoConfirm.assert_called_once()
+
+
+def test_should_call_callback_when_OnRspQrySettlementInfoConfirm(td_client: TdAPI, spi_callback):
+    # given
+    td_client.set_spi_callback(CtpMethod.OnRspQrySettlementInfoConfirm, spi_callback)
+    pSettlementInfoConfirm = tdapi.CThostFtdcSettlementInfoConfirmField()
+    pRspInfo = tdapi.CThostFtdcRspInfoField()
+    # when
+    td_client.OnRspQrySettlementInfoConfirm(pSettlementInfoConfirm, pRspInfo, 2, True)
     # should
     spi_callback.assert_called_once()
 
