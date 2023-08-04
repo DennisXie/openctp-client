@@ -17,6 +17,8 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
         self._spi_callback: dict[CtpMethod, Callable] = {}
         self._api: tdapi.CThostFtdcTraderApi = tdapi.CThostFtdcTraderApi.CreateFtdcTraderApi(self.config.user_id)
         self._api.RegisterSpi(self)
+        self._api.SubscribePrivateTopic(tdapi.THOST_TERT_QUICK)
+        self._api.SubscribePublicTopic(tdapi.THOST_TERT_QUICK)
         self._api.RegisterFront(self.config.td_addr)
     
     @property
@@ -67,7 +69,7 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
         self.api.Join()
     
     def OnFrontConnected(self) -> None:
-        print("on front connected")
+        self.log("on front connected")
         req = tdapi.CThostFtdcReqAuthenticateField()
         req.BrokerID = self.config.broker_id
         req.UserID = self.config.user_id
@@ -75,10 +77,11 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
         req.AppID = self.config.app_id
         self._api.ReqAuthenticate(req, self.request_id)
     
-    def OnRspAuthenticate(self, pRspAuthenticateField, pRspInfo, nRequestID, bIsLast):
+    def OnRspAuthenticate(self, pRspAuthenticateField, pRspInfo: tdapi.CThostFtdcRspInfoField, nRequestID, bIsLast):
         if pRspInfo is None or pRspInfo.ErrorID == 0:
             self._login()
         else:
+            self.log(f"on rsp authenticate {pRspInfo.ErrorID}, {pRspInfo.ErrorMsg}")
             self._authenticate_failed(pRspInfo, nRequestID, bIsLast)
     
     def _login(self) -> None:
@@ -105,10 +108,8 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
             IsLast=bIsLast
         )
         rsp.source = Api.Td
-            
         if pRspInfo is not None:
             self.log(f"login rsp info, ErrorID: {pRspInfo.ErrorID}, ErrorMsg: {pRspInfo.ErrorMsg}")
-            
         self.callback(rsp)
     
     def ReqQrySettlementInfo(self, qry_settlement_info: QrySettlementInfoField, req_id: int | None = None) -> int:
@@ -118,7 +119,7 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
     
     def OnRspQrySettlementInfo(self, pSettlementInfo: tdapi.CThostFtdcSettlementInfoField, pRspInfo, nRequestID, bIsLast):
         rsp = RspQrySettlementInfo(
-            RspSettlementInfo=SettlementInfoField.from_ctp_object(pSettlementInfo),
+            SettlementInfo=SettlementInfoField.from_ctp_object(pSettlementInfo),
             RspInfo=RspInfoField.from_ctp_object(pRspInfo),
             RequestID=nRequestID,
             IsLast=bIsLast
@@ -132,7 +133,7 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
     
     def OnRspQrySettlementInfoConfirm(self, pSettlementInfoConfirm: tdapi.CThostFtdcSettlementInfoConfirmField, pRspInfo, nRequestID, bIsLast):
         rsp = RspQrySettlementInfoConfirm(
-            RspSettlementInfoConfirm=SettlementInfoConfirmField.from_ctp_object(pSettlementInfoConfirm),
+            SettlementInfoConfirm=SettlementInfoConfirmField.from_ctp_object(pSettlementInfoConfirm),
             RspInfo=RspInfoField.from_ctp_object(pRspInfo),
             RequestID=nRequestID,
             IsLast=bIsLast
@@ -147,7 +148,7 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
     
     def OnRspQryInstrument(self, pInstrument: tdapi.CThostFtdcInstrumentField, pRspInfo, nRequestID, bIsLast):
         rsp = RspQryInstrument(
-            RspQryInstrument=InstrumentField.from_ctp_object(pInstrument),
+            Instrument=InstrumentField.from_ctp_object(pInstrument),
             RspInfo=RspInfoField.from_ctp_object(pRspInfo),
             RequestID=nRequestID,
             IsLast=bIsLast
@@ -162,7 +163,7 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
     def OnRspOrderInsert(self, pInputOrder: tdapi.CThostFtdcInputOrderField, pRspInfo, nRequestID, bIsLast):
         """Error raised by the CTP"""
         rsp = RspOrderInsert(
-            RspOrderInsert=InputOrderField.from_ctp_object(pInputOrder),
+            InputOrder=InputOrderField.from_ctp_object(pInputOrder),
             RspInfo=RspInfoField.from_ctp_object(pRspInfo),
             RequestID=nRequestID,
             IsLast=bIsLast
@@ -172,7 +173,7 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
     def OnErrRtnOrderInsert(self, pInputOrder: tdapi.CThostFtdcInputOrderField, pRspInfo):
         """Error raised by the exchange"""
         rsp = ErrRtnOrderInsert(
-            ErrRtnOrderInsert=InputOrderField.from_ctp_object(pInputOrder),
+            InputOrder=InputOrderField.from_ctp_object(pInputOrder),
             RspInfo=RspInfoField.from_ctp_object(pRspInfo),
         )
         self.callback(rsp)
@@ -180,13 +181,13 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
     def OnRtnOrder(self, pOrder: tdapi.CThostFtdcOrderField):
         """Success order insert or order action"""
         rsp = RtnOrder(
-            RtnOrder=OrderField.from_ctp_object(pOrder),
+            Order=OrderField.from_ctp_object(pOrder),
         )
         self.callback(rsp)
     
     def OnRtnTrade(self, pTrade: tdapi.CThostFtdcTradeField):
         rsp = RtnTrade(
-            RtnTrade=TradeField.from_ctp_object(pTrade),
+            Trade=TradeField.from_ctp_object(pTrade),
         )
         self.callback(rsp)
     
@@ -198,7 +199,7 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
     def OnRspOrderAction(self, pInputOrderAction: tdapi.CThostFtdcInputOrderActionField, pRspInfo, nRequestID, bIsLast):
         """Error raised by the CTP"""
         rsp = RspOrderAction(
-            RspOrderAction=InputOrderActionField.from_ctp_object(pInputOrderAction),
+            InputOrderAction=InputOrderActionField.from_ctp_object(pInputOrderAction),
             RspInfo=RspInfoField.from_ctp_object(pRspInfo),
             RequestID=nRequestID,
             IsLast=bIsLast
@@ -208,7 +209,7 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
     def OnErrRtnOrderAction(self, pInputOrderAction: tdapi.CThostFtdcInputOrderActionField, pRspInfo):
         """Error raised by the exchange"""
         rsp = ErrRtnOrderAction(
-            ErrRtnOrderAction=InputOrderActionField.from_ctp_object(pInputOrderAction),
+            OrderAction=OrderActionField.from_ctp_object(pInputOrderAction),
             RspInfo=RspInfoField.from_ctp_object(pRspInfo),
         )
         self.callback(rsp)
@@ -220,7 +221,7 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
     
     def OnRspQryTradingAccount(self, pTradingAccount: tdapi.CThostFtdcTradingAccountField, pRspInfo, nRequestID, bIsLast):
         rsp = RspQryTradingAccount(
-            RspQryTradingAccount=TradingAccountField.from_ctp_object(pTradingAccount),
+            TradingAccount=TradingAccountField.from_ctp_object(pTradingAccount),
             RspInfo=RspInfoField.from_ctp_object(pRspInfo),
             RequestID=nRequestID,
             IsLast=bIsLast
@@ -234,7 +235,7 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
     
     def OnRspQryInvestorPosition(self, pInvestorPosition: tdapi.CThostFtdcInvestorPositionField, pRspInfo, nRequestID, bIsLast):
         rsp = RspQryInvestorPosition(
-            RspQryInvestorPosition=InvestorPositionField.from_ctp_object(pInvestorPosition),
+            InvestorPosition=InvestorPositionField.from_ctp_object(pInvestorPosition),
             RspInfo=RspInfoField.from_ctp_object(pRspInfo),
             RequestID=nRequestID,
             IsLast=bIsLast
@@ -248,7 +249,7 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
     
     def OnRspQryOrder(self, pOrder: tdapi.CThostFtdcOrderField, pRspInfo, nRequestID, bIsLast):
         rsp = RspQryOrder(
-            RspQryOrder=OrderField.from_ctp_object(pOrder),
+            Order=OrderField.from_ctp_object(pOrder),
             RspInfo=RspInfoField.from_ctp_object(pRspInfo),
             RequestID=nRequestID,
             IsLast=bIsLast
@@ -262,7 +263,7 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
     
     def OnRspQryTrade(self, pTrade: tdapi.CThostFtdcTradeField, pRspInfo, nRequestID, bIsLast):
         rsp = RspQryTrade(
-            RspQryTrade=TradeField.from_ctp_object(pTrade),
+            Trade=TradeField.from_ctp_object(pTrade),
             RspInfo=RspInfoField.from_ctp_object(pRspInfo),
             RequestID=nRequestID,
             IsLast=bIsLast
