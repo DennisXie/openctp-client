@@ -16,6 +16,7 @@ def on_settlement_info(settlement_info: SettlementInfoField, rsp_info: RspInfoFi
     if rsp_info and rsp_info.ErrorID != 0:
         print(f"error {rsp_info.model_dump()}")
     if settlement_info:
+        # pydantic这里的content是deepcopy的，不会存在ctp复用内存导致已经保存的数据被覆盖的问题
         print(settlement_info.Content)
     if is_last:
         settlement_event.set()

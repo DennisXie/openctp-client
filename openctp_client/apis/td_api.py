@@ -42,9 +42,6 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
         print(*args, **kwargs)
     
     def _default_callback(self, response: CtpResponse) -> None:
-        # TODO: 需要做一个小实验，查询结算单时, SettlementInfo.Content的内存是复用的,
-        # 我们这里需要确认一下，SettlementInfo在经过pydantic验证后是否字符串也会在内存
-        # 重写后导致字符串变化。如果会导致字符串变化的话，那么需要写个方法专门copy这些内容.
         if response.method in self._spi_callback:
             self._spi_callback[response.method](*response.args)
         else:
