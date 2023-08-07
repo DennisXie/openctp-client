@@ -47,10 +47,12 @@ class SimpleCtpClient(object):
             SimpleCtpClientEvent.on_position: [],
             SimpleCtpClientEvent.on_tick: [],
         }
-        self._callback: dict[CtpMethod, Callable] = {
+        self._ctp_callback: dict[CtpMethod, Callable] = {
             CtpMethod.OnRspUserLogin: self._login,
             CtpMethod.OnRspAuthenticate: self._authenticate,
+            CtpMethod.OnRtnDepthMarketData: self._on_tick,
         }
+        self._thread = threading.Thread(target=self._consume_rsp)
     
     @property
     def connected(self) -> bool:
@@ -67,35 +69,50 @@ class SimpleCtpClient(object):
     def log(self, *args, **kwargs) -> None:
         print(*args, **kwargs)
     
+    def on_ctp_event(self, method: CtpMethod, callback: Callable) -> Callable:
+        self._ctp_callback[method] = callback
+    
+    def on_event(self, event: SimpleCtpClientEvent, callback: Callable) -> Callable:
+        if callback not in self._event_callback[event]:
+            self._event_callback[event].append(callback)
+    
+    def off_event(self, event: SimpleCtpClientEvent, callback: Callable) -> Callable:
+        if callback in self._event_callback[event]:
+            self._event_callback[event].remove(callback)
+    
     def connect(self) -> None:
+        self._start_process()
         self.mdapi.Connect()
         self._wait_connect()
         self.tdapi.Connect()
         self._wait_connect()
+    
+    def disconnect(self) -> None:
+        # TODO: disconnect api
+        self._stop_process()
         
     def async_connect(self) -> None:
         self.mdapi.Connect()
         self.tdapi.Connect()
     
-    def register(self, event: SimpleCtpClientEvent, callback: Callable) -> Callable:
-        if callback not in self._callback[event]:
-            self._callback[event].append(callback)
-        return callback
-    
-    def unregister(self, event: SimpleCtpClientEvent, callback: Callable) -> None:
-        if callback in self._callback[event]:
-            self._callback[event].remove(callback)
-    
+    def subscribe(self, *instruments: list[str]) -> None:
+        self.mdapi.SubscribeMarketData(instruments)
+        
     def _wait_connect(self) -> None:
         self._connected_event.wait()
         self._connected_event.clear()
         if not self._connected and self._connect_error:
             raise CtpException(self._connect_error.ErrorID, self._connect_error.ErrorMsg)
-   
+
+    def _start_process(self) -> None:
+        self._thread.start()
+    
+    def _stop_process(self) -> None:
+        self._queue.put(None)
+
     def _produce_rsp(self, rsp: CtpResponse) -> None:
-        # self._queue.put(rsp)
-        # TODO: use another thread to deal with the rsp
-        self._process_rsp(rsp)
+        self.log(f"Produce rsp: {rsp.method}")
+        self._queue.put(rsp)
     
     def _consume_rsp(self) -> None:
         while True:
@@ -106,10 +123,10 @@ class SimpleCtpClient(object):
                 break
     
     def _process_rsp(self, rsp: CtpResponse) -> None:
-        if rsp.method in self._callback:
-            self._callback[rsp.method](rsp)
+        if rsp.method in self._ctp_callback:
+            self._ctp_callback[rsp.method](rsp)
         else:
-            pass
+            self.log(f"Method {rsp.method} not support, skipped.")
     
     def _authenticate(self, rsp: RspAuthenticate) -> None:
         self.log(f"Td authenticate failed.")
@@ -136,5 +153,6 @@ class SimpleCtpClient(object):
             self._connect_error = rsp_info
         self._connected_event.set()
     
-    def _on_tick(self) -> None:
-        pass
+    def _on_tick(self, rsp: RtnDepthMarketData) -> None:
+        for callback in self._event_callback[SimpleCtpClientEvent.on_tick]:
+            callback(rsp.DepthMarketData)

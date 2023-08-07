@@ -16,8 +16,15 @@ def mock_td_md(mocker: MockerFixture):
 
 
 @pytest.fixture
-def simple_ctp_client(config: CtpConfig, mock_td_md):
-    return SimpleCtpClient(config)
+def simple_ctp_client(config: CtpConfig, mock_td_md, mocker):
+    client = SimpleCtpClient(config)
+    client._start_process = mocker.Mock()
+    client._stop_process = mocker.Mock()
+    client._produce_rsp = mocker.Mock()
+    client._produce_rsp.side_effect = lambda rsp: client._process_rsp(rsp)
+    client.tdapi.callback = client._produce_rsp
+    client.mdapi.callback = client._produce_rsp
+    return client
 
 
 def test_should_create_simple_ctp_client(config: CtpConfig):
