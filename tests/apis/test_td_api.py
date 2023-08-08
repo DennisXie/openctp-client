@@ -212,7 +212,7 @@ def test_should_call_callback_when_OnRtnTrade(td_client: TdAPI, spi_callback):
     # given
     td_client.set_spi_callback(CtpMethod.OnRtnTrade, spi_callback)
     pTrade = tdapi.CThostFtdcTradeField()
-    pTrade.AccountID = "123"
+    pTrade.BrokerID = "9999"
     # when
     td_client.OnRtnTrade(pTrade)
     # should

@@ -1,1 +1,1 @@
-from .simple_ctp_client import SimpleCtpClient
+from .simple_ctp_client import SimpleCtpClient, SimpleCtpClientEvent

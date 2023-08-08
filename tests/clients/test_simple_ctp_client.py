@@ -1,9 +1,10 @@
 import pytest
 from pytest_mock import MockerFixture
 
-from openctp_client.clients import SimpleCtpClient
+from openctp_client.clients import SimpleCtpClient, SimpleCtpClientEvent
 from openctp_client.exceptions import CtpException
-from openctp_client.objects import CtpConfig
+from openctp_client.objects import *
+from openctp_client.objects.responses import *
 from openctp_client.openctp import tdapi
 
 
@@ -32,6 +33,19 @@ def test_should_create_simple_ctp_client(config: CtpConfig):
     assert client is not None
     assert client.tdapi is not None
     assert client.mdapi is not None
+
+
+def test_should_have_callback_when_on_event(simple_ctp_client: SimpleCtpClient, mocker):
+    fn = mocker.Mock()
+    simple_ctp_client.on_event(SimpleCtpClientEvent.on_account, fn)
+    assert fn in simple_ctp_client._event_callback[SimpleCtpClientEvent.on_account]
+
+
+def test_should_del_callback_when_off_event(simple_ctp_client: SimpleCtpClient, mocker):
+    fn = mocker.Mock()
+    simple_ctp_client.on_event(SimpleCtpClientEvent.on_account, fn)
+    simple_ctp_client.off_event(SimpleCtpClientEvent.on_account, fn)
+    assert fn not in simple_ctp_client._event_callback[SimpleCtpClientEvent.on_account]
 
 
 def test_should_connected_is_True_when_connect(simple_ctp_client: SimpleCtpClient):
@@ -96,3 +110,16 @@ def test_should_throw_exception_when_connect_give_td_authenticate_failed(simple_
     with pytest.raises(CtpException):
         simple_ctp_client.connect()
     assert simple_ctp_client.connected is False
+
+
+# @pytest.mark.skip
+def test_should_call_callback_when_OnRtnDepthMarketData(simple_ctp_client: SimpleCtpClient, mocker):
+    # given
+    market_data = DepthMarketDataField(TradingDay="20231212", AskPrice1=19.22)
+    rtn_depth_market_data = RtnDepthMarketData(DepthMarketData=market_data)
+    fn = mocker.Mock()
+    simple_ctp_client.on_event(SimpleCtpClientEvent.on_tick, fn)
+    # when
+    simple_ctp_client._produce_rsp(rtn_depth_market_data)
+    # then
+    fn.assert_called_once_with(market_data)
