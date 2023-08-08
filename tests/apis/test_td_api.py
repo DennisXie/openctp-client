@@ -48,7 +48,7 @@ def test_should_get_none_when_del_spi_callback_from_td_api(config: CtpConfig, sp
 
 def test_should_call_Init_when_Connect(td_client: TdAPI):
     td_client.Connect()
-    td_client.api.Init.assert_called_once_with()
+    td_client.api.Init.assert_called_once()
 
 
 def test_should_call_api_ReqAuthenticate_when_OnFrontConnected(td_client: TdAPI):
@@ -92,11 +92,14 @@ def test_should_call_callback_when_OnRspUserLogin(td_client: TdAPI, spi_callback
     # given
     td_client.set_spi_callback(CtpMethod.OnRspUserLogin, spi_callback)
     pRspUserLogin = tdapi.CThostFtdcRspUserLoginField()
+    pRspUserLogin.BrokerID = "9999"
     pRspInfo = tdapi.CThostFtdcRspInfoField()
     # when
     td_client.OnRspUserLogin(pRspUserLogin, pRspInfo, 2, True)
     # should
-    spi_callback.assert_called_once()
+    user_login_field = RspUserLoginField.from_ctp_object(pRspUserLogin)
+    rsp_info_field = RspInfoField.from_ctp_object(pRspInfo)
+    spi_callback.assert_called_once_with(user_login_field, rsp_info_field, 2, True)
 
 
 def test_should_call_api_ReqQrySettlementInfo_when_ReqQrySettlementInfo(td_client: TdAPI):
@@ -109,11 +112,14 @@ def test_should_call_callback_when_OnRspQrySettlementInfo(td_client: TdAPI, spi_
     # given
     td_client.set_spi_callback(CtpMethod.OnRspQrySettlementInfo, spi_callback)
     pSettlementInfo = tdapi.CThostFtdcSettlementInfoField()
+    pSettlementInfo.AccountID = "1234"
     pRspInfo = tdapi.CThostFtdcRspInfoField()
     # when
     td_client.OnRspQrySettlementInfo(pSettlementInfo, pRspInfo, 2, True)
     # should
-    spi_callback.assert_called_once()
+    settlement_info = SettlementInfoField.from_ctp_object(pSettlementInfo)
+    rsp_info = RspInfoField.from_ctp_object(pRspInfo)
+    spi_callback.assert_called_once_with(settlement_info, rsp_info, 2, True)
 
 
 def test_should_call_api_ReqQrySettlementInfoConfirm_when_ReqQrySettlementInfoConfirm(td_client: TdAPI):
@@ -126,11 +132,14 @@ def test_should_call_callback_when_OnRspQrySettlementInfoConfirm(td_client: TdAP
     # given
     td_client.set_spi_callback(CtpMethod.OnRspQrySettlementInfoConfirm, spi_callback)
     pSettlementInfoConfirm = tdapi.CThostFtdcSettlementInfoConfirmField()
+    pSettlementInfoConfirm.BrokerID = "9999"
     pRspInfo = tdapi.CThostFtdcRspInfoField()
     # when
     td_client.OnRspQrySettlementInfoConfirm(pSettlementInfoConfirm, pRspInfo, 2, True)
     # should
-    spi_callback.assert_called_once()
+    settlement_info_confirm = SettlementInfoConfirmField.from_ctp_object(pSettlementInfoConfirm)
+    rsp_info = RspInfoField.from_ctp_object(pRspInfo)
+    spi_callback.assert_called_once_with(settlement_info_confirm, rsp_info, 2, True)
 
 
 def test_should_call_api_ReqQryInstrument_when_ReqQryInstrument(td_client: TdAPI):
@@ -143,11 +152,14 @@ def test_should_call_callback_when_OnRspQryInstrument(td_client: TdAPI, spi_call
     # given
     td_client.set_spi_callback(CtpMethod.OnRspQryInstrument, spi_callback)
     pInstrument = tdapi.CThostFtdcInstrumentField()
+    pInstrument.InstrumentID = "ag2312"
     pRspInfo = tdapi.CThostFtdcRspInfoField()
     # when
     td_client.OnRspQryInstrument(pInstrument, pRspInfo, 2, True)
     # should
-    spi_callback.assert_called_once()
+    instrument = InstrumentField.from_ctp_object(pInstrument)
+    rsp_info = RspInfoField.from_ctp_object(pRspInfo)
+    spi_callback.assert_called_once_with(instrument, rsp_info, 2, True)
 
 
 def test_should_call_api_ReqOrderInsert_when_ReqOrderInsert(td_client: TdAPI):
@@ -174,31 +186,38 @@ def test_should_call_callback_when_OnErrRtnOrderInsert(td_client: TdAPI, spi_cal
     # given
     td_client.set_spi_callback(CtpMethod.OnErrRtnOrderInsert, spi_callback)
     pInputOrder = tdapi.CThostFtdcInputOrderField()
+    pInputOrder.AccountID = "123"
     pRspInfo = tdapi.CThostFtdcRspInfoField()
     # when
     td_client.OnErrRtnOrderInsert(pInputOrder, pRspInfo)
     # should
-    spi_callback.assert_called_once()
+    input_order = InputOrderField.from_ctp_object(pInputOrder)
+    rsp_info = RspInfoField.from_ctp_object(pRspInfo)
+    spi_callback.assert_called_once_with(input_order, rsp_info)
 
 
 def test_should_call_callback_when_OnRtnOrder(td_client: TdAPI, spi_callback):
     # given
     td_client.set_spi_callback(CtpMethod.OnRtnOrder, spi_callback)
     pOrder = tdapi.CThostFtdcOrderField()
+    pOrder.AccountID = "123"
     # when
     td_client.OnRtnOrder(pOrder)
     # should
-    spi_callback.assert_called_once()
+    order = OrderField.from_ctp_object(pOrder)
+    spi_callback.assert_called_once_with(order)
 
 
 def test_should_call_callback_when_OnRtnTrade(td_client: TdAPI, spi_callback):
     # given
     td_client.set_spi_callback(CtpMethod.OnRtnTrade, spi_callback)
     pTrade = tdapi.CThostFtdcTradeField()
+    pTrade.AccountID = "123"
     # when
     td_client.OnRtnTrade(pTrade)
     # should
-    spi_callback.assert_called_once()
+    trade = TradeField.from_ctp_object(pTrade)
+    spi_callback.assert_called_once_with(trade)
 
 
 def test_should_call_api_ReqOrderAction_when_ReqOrderAction(td_client: TdAPI):
@@ -211,22 +230,28 @@ def test_should_call_callback_when_OnRspOrderAction(td_client: TdAPI, spi_callba
     # given
     td_client.set_spi_callback(CtpMethod.OnRspOrderAction, spi_callback)
     pInputOrderAction = tdapi.CThostFtdcInputOrderActionField()
+    pInputOrderAction.BrokerID = "9999"
     pRspInfo = tdapi.CThostFtdcRspInfoField()
     # when
     td_client.OnRspOrderAction(pInputOrderAction, pRspInfo, 2, True)
     # should
-    spi_callback.assert_called_once()
+    input_order_action = InputOrderActionField.from_ctp_object(pInputOrderAction)
+    rsp_info = RspInfoField.from_ctp_object(pRspInfo)
+    spi_callback.assert_called_once_with(input_order_action, rsp_info, 2, True)
     
 
 def test_should_call_callback_when_OnErrRtnOrderAction(td_client: TdAPI, spi_callback):
     # given
     td_client.set_spi_callback(CtpMethod.OnErrRtnOrderAction, spi_callback)
     pOrderAction = tdapi.CThostFtdcOrderActionField()
+    pOrderAction.BrokerID = "9999"
     pRspInfo = tdapi.CThostFtdcRspInfoField()
     # when
     td_client.OnErrRtnOrderAction(pOrderAction, pRspInfo)
     # should
-    spi_callback.assert_called_once()
+    order_action = OrderActionField.from_ctp_object(pOrderAction)
+    rsp_info = RspInfoField.from_ctp_object(pRspInfo)
+    spi_callback.assert_called_once_with(order_action, rsp_info)
 
 
 def test_should_call_api_ReqQryTradingAccount_when_ReqQryTradingAccount(td_client: TdAPI):
@@ -239,11 +264,14 @@ def test_should_call_callback_when_OnRspQryTradingAccount(td_client: TdAPI, spi_
     # given
     td_client.set_spi_callback(CtpMethod.OnRspQryTradingAccount, spi_callback)
     pTradingAccount = tdapi.CThostFtdcTradingAccountField()
+    pTradingAccount.AccountID = "123"
     pRspInfo = tdapi.CThostFtdcRspInfoField()
     # when
     td_client.OnRspQryTradingAccount(pTradingAccount, pRspInfo, 2, True)
     # should
-    spi_callback.assert_called_once()
+    trading_account = TradingAccountField.from_ctp_object(pTradingAccount)
+    rsp_info = RspInfoField.from_ctp_object(pRspInfo)
+    spi_callback.assert_called_once_with(trading_account, rsp_info, 2, True)
 
 
 def test_should_call_api_ReqQryInvestorPosition_when_ReqQryInvestorPosition(td_client: TdAPI):
@@ -256,11 +284,14 @@ def test_should_call_callback_when_OnRspQryInvestorPosition(td_client: TdAPI, sp
     # given
     td_client.set_spi_callback(CtpMethod.OnRspQryInvestorPosition, spi_callback)
     pInvestorPosition = tdapi.CThostFtdcInvestorPositionField()
+    pInvestorPosition.BrokerID = "9999"
     pRspInfo = tdapi.CThostFtdcRspInfoField()
     # when
     td_client.OnRspQryInvestorPosition(pInvestorPosition, pRspInfo, 2, True)
     # should
-    spi_callback.assert_called_once()
+    investor_position = InvestorPositionField.from_ctp_object(pInvestorPosition)
+    rsp_info = RspInfoField.from_ctp_object(pRspInfo)
+    spi_callback.assert_called_once_with(investor_position, rsp_info, 2, True)
 
 
 def test_should_call_api_ReqQryOrder_when_ReqQryOrder(td_client: TdAPI):
@@ -273,11 +304,14 @@ def test_should_call_callback_when_OnRspQryOrder(td_client: TdAPI, spi_callback)
     # given
     td_client.set_spi_callback(CtpMethod.OnRspQryOrder, spi_callback)
     pOrder = tdapi.CThostFtdcOrderField()
+    pOrder.BrokerID = "9999"
     pRspInfo = tdapi.CThostFtdcRspInfoField()
     # when
     td_client.OnRspQryOrder(pOrder, pRspInfo, 2, True)
     # should
-    spi_callback.assert_called_once()
+    order = OrderField.from_ctp_object(pOrder)
+    rsp_info = RspInfoField.from_ctp_object(pRspInfo)
+    spi_callback.assert_called_once_with(order, rsp_info, 2, True)
 
 
 def test_should_call_api_ReqQryTrade_when_ReqQryTrade(td_client: TdAPI):
@@ -290,8 +324,11 @@ def test_should_call_callback_when_OnRspQryTrade(td_client: TdAPI, spi_callback)
     # given
     td_client.set_spi_callback(CtpMethod.OnRspQryTrade, spi_callback)
     pTrade = tdapi.CThostFtdcTradeField()
+    pTrade.BrokerID = "9999"
     pRspInfo = tdapi.CThostFtdcRspInfoField()
     # when
     td_client.OnRspQryTrade(pTrade, pRspInfo, 2, True)
     # should
-    spi_callback.assert_called_once()
+    trade = TradeField.from_ctp_object(pTrade)
+    rsp_info = RspInfoField.from_ctp_object(pRspInfo)
+    spi_callback.assert_called_once_with(trade, rsp_info, 2, True)
