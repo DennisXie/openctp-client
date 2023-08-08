@@ -48,6 +48,19 @@ def test_should_del_callback_when_off_event(simple_ctp_client: SimpleCtpClient, 
     assert fn not in simple_ctp_client._event_callback[SimpleCtpClientEvent.on_account]
 
 
+def test_should_consume_when_produce_rsp(config: CtpConfig, mocker):
+    # given
+    client = SimpleCtpClient(config)
+    client._process_rsp = mocker.Mock()
+    rsp = CtpResponse(method=CtpMethod.OnErrRtnOrderAction)
+    client._produce_rsp(rsp)
+    client._stop_process()
+    # when
+    client._consume_rsp()
+    # should
+    client._process_rsp.assert_called_once_with(rsp)
+
+
 def test_should_connected_is_True_when_connect(simple_ctp_client: SimpleCtpClient):
     login_field = tdapi.CThostFtdcRspUserLoginField()
     simple_ctp_client.mdapi.api.Init.side_effect = simple_ctp_client.mdapi.OnFrontConnected
