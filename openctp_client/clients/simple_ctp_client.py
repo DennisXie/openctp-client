@@ -18,6 +18,18 @@ class SimpleCtpClientEvent(Enum):
     on_account = auto()
     on_position = auto()
     on_tick = auto()
+
+
+class Direction(Enum):
+    Buy = '0'
+    Sell = '1'
+
+
+class Offset(Enum):
+    Open = '0'
+    Close = '1'
+    CloseToday = '3'
+    CloseYesterday = '4'
     
 
 # 1. 同步方式进行连接
@@ -95,9 +107,31 @@ class SimpleCtpClient(object):
         self.mdapi.Connect()
         self.tdapi.Connect()
     
-    def subscribe(self, *instruments: list[str]) -> None:
-        self.mdapi.SubscribeMarketData(instruments)
-        
+    def subscribe(self, *instruments: list[str]) -> int:
+        return self.mdapi.SubscribeMarketData(instruments)
+    
+    def order_insert(self, exchange: str, instrument: str, price: float, volume: int, direction: Direction, offset: Offset) -> int:
+        req = InputOrderField(
+            BrokerID=self._config.broker_id,
+            InvestorID=self._config.investor_id,
+            ExchangeID=exchange,
+            InstrumentID=instrument,
+            CombOffsetFlag=offset.value,
+            CombHedgeFlag='1',
+            Direction=direction.value,
+            VolumeTotalOriginal=volume,
+            IsAutoSuspend=0,
+            IsSwapOrder=0,
+            OrderPriceType='2',
+            TimeCondition='3',
+            VolumeCondition='1',
+            ContingentCondition='1',
+            ForceCloseReason='0',
+            LimitPrice=price,
+            StopPrice=0
+        )
+        return self.tdapi.ReqOrderInsert(req)
+       
     def _wait_connect(self) -> None:
         self._connected_event.wait()
         self._connected_event.clear()
