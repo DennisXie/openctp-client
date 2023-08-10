@@ -69,6 +69,16 @@ class RtnDepthMarketData(CtpResponse):
         return [self.DepthMarketData]
 
 
+class RspQryDepthMarketData(CtpResponse):
+    method: CtpMethod = CtpMethod.OnRspQryDepthMarketData
+    
+    DepthMarketData: Optional[DepthMarketDataField] = None
+    
+    @property
+    def args(self) -> list[Any]:
+        return [self.DepthMarketData, self.RspInfo, self.RequestID, self.IsLast]
+
+
 class RspQrySettlementInfo(CtpResponse):
     method: CtpMethod = CtpMethod.OnRspQrySettlementInfo
     

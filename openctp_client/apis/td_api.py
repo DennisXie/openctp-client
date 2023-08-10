@@ -267,3 +267,17 @@ class TdAPI(tdapi.CThostFtdcTraderSpi):
             IsLast=bIsLast
         )
         self.callback(rsp)
+    
+    def ReqQryDepthMarketData(self, qry_depth_market_data: QryDepthMarketDataField, req_id: int | None = None) -> int:
+        req = qry_depth_market_data.ctp_object()
+        req_id = req_id or self.request_id
+        return self._api.ReqQryDepthMarketData(req, req_id)
+    
+    def OnRspQryDepthMarketData(self, pDepthMarketData: tdapi.CThostFtdcDepthMarketDataField, pRspInfo, nRequestID, bIsLast):
+        rsp = RspQryDepthMarketData(
+            DepthMarketData=DepthMarketDataField.from_ctp_object(pDepthMarketData),
+            RspInfo=RspInfoField.from_ctp_object(pRspInfo),
+            RequestID=nRequestID,
+            IsLast=bIsLast
+        )
+        self.callback(rsp)

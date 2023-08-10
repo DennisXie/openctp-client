@@ -1,6 +1,6 @@
 from typing import ClassVar, Optional, TypeVar
 from pydantic import BaseModel, Field, constr, ConfigDict
-from openctp_ctp import tdapi
+from ..openctp import tdapi
 
 
 class CtpField(BaseModel):
@@ -263,6 +263,13 @@ class SpecificInstrumentField(CtpField):
     
     InstrumentID: Optional[constr(max_length=81)] = Field(None, description='合约代码')
     
+    
+class QryDepthMarketDataField(CtpField):
+    _ctp_type_ = tdapi.CThostFtdcQryDepthMarketDataField
+    
+    ExchangeID: Optional[constr(max_length=9)] = Field(None, description='交易所代码')
+    InstrumentID: Optional[constr(max_length=81)] = Field(None, description='合约代码')
+   
     
 class DepthMarketDataField(CtpField):
     _ctp_type_ = tdapi.CThostFtdcDepthMarketDataField

@@ -41,6 +41,8 @@ class CtpMethod(Enum):
     OnRspQryTrade = auto()
     ReqQryOrder = auto()
     OnRspQryOrder = auto()
+    ReqQryDepthMarketData = auto()
+    OnRspQryDepthMarketData = auto()
     
     @classmethod
     def nameOf(cls, name):
