@@ -113,7 +113,7 @@ class SimpleCtpClient(object):
     def order_insert(self, exchange: str, instrument: str, price: float, volume: int, direction: Direction, offset: Offset) -> int:
         req = InputOrderField(
             BrokerID=self._config.broker_id,
-            InvestorID=self._config.investor_id,
+            InvestorID=self._config.user_id,
             ExchangeID=exchange,
             InstrumentID=instrument,
             CombOffsetFlag=offset.value,
